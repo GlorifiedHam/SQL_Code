@@ -54,7 +54,7 @@ Lastname NVARCHAR(1000) NOT NULL,
 Age DATE NOT NULL,
 [Password] NVARCHAR(100) NOT NULL,--Make an old password TABLE, with a trigger, that only saves one pw back?  
 Email NVARCHAR(300) NOT NULL,
-[Amount of entries] INT, --Trigger on creating an entry, eller fixa detta i programmet
+[Amount of entries] INT, --Trigger on creating an entry
 Phonenumber VARCHAR(22) CHECK(Phonenumber > 0), 
 RegDATE DATE DEFAULT GETDATE()
 );
@@ -120,7 +120,7 @@ CREATE TABLE Forum.GlobalCategory
 (
 GlobalCategoryID INT IDENTITY PRIMARY KEY,
 UserID INT,
-[Read] NVARCHAR(50) DEFAULT 'Member', -- Trigger to change everything else if this one is higher than the rest.
+[Read] NVARCHAR(50) DEFAULT 'Member', 
 GlobalCategoryName NVARCHAR(200) NOT NULL,
 
 CONSTRAINT FK__User_GlobalCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
@@ -221,11 +221,35 @@ GuideID INT,
 CONSTRAINT FK__Guide_GuidePrictures FOREIGN KEY (GuideID) REFERENCES [Site].Guide(GuideID) ON DELETE CASCADE
 )
 
+CREATE TABLE [Gaming].[IPAdressPlayer]
+(
+IPAdressPlayerID INT NOT NULL IDENTITY PRIMARY KEY,
+Group8 VARBINARY(2) null,  --I VARBINARY(2) fields that represents the 8 groups in a ipv6. The fields 5 - 8 is nullable as they are only used for IPv6. The fields 1 - 4 is set to NOT NULL as they are be used for both IPv4 and IPv6.
+Group7 VARBINARY(2) null,
+Group6 VARBINARY(2) null,
+Group5 VARBINARY(2) null,
+Group4 VARBINARY(2) null,
+Group3 VARBINARY(2) null,
+Group2 VARBINARY(2) null,
+Group1 VARBINARY(2) null,
+Network TinyINT null
+)
+
+CREATE TABLE Gaming.Players
+(
+PlayerID INT IDENTITY PRIMARY KEY,
+[Name] NVARCHAR(100),
+IPAdressPlayer INT,
+-- Kan man hämta arma3 playerID eller steamID?
+
+CONSTRAINT FK__IPAdressPlayer_Players FOREIGN KEY (IPAdressPlayerID) REFERENCES [Gaming].[IPAdressPlayer](IPAdressPlayerID) ON DELETE CASCADE
+ 
+)
 
 CREATE TABLE Gaming.[Server]
 (
 ServerID INT IDENTITY PRIMARY KEY,
-Name NVARCHAR,
+[Name] NVARCHAR(100),
 [Online] BIT NOT NULL,
 LastCHECK DATE,
 MaxPlayers INT,
@@ -240,7 +264,7 @@ Bans INT,
 MoneyCirculatedInShop money,
 MissionsDone int,
 PlayerKills int, 
-PlayerAIKills int, --Players kille AI
+PlayerAIKills int, --Player killed AI
 AIPlayerKills int, --AI killed Player
 )
 
@@ -296,7 +320,6 @@ CONSTRAINT FK__Server_ServerStats FOREIGN KEY (ServerID) REFERENCES Gaming.[Serv
 )
 
 
-
 CREATE TABLE Gaming.ServerBan
 (
 ServerID INT,
@@ -334,18 +357,6 @@ BanDate Date,
 CONSTRAINT FK__User_AccountBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
-CREATE TABLE Gaming.MoneyLevel
-(
-[level] SMALLINT IDENTITY PRIMARY KEY,
-Amount MONEY
-)
-
-CREATE TABLE Gaming.Bank
-(
-BankID INT IDENTITY PRIMARY KEY,
-AmountInAccount money,
-AcountLevel SMALLINT DEFAULT 1
-)
 
 CREATE TABLE Gaming.GameCharacter
 (
@@ -359,16 +370,12 @@ x DECIMAL, --Coord
 y DECIMAL, --Coord
 Alive BIT,
 kills INT,
-AmountOnCharachter MONEY, -- Make a trigger if it gets full 
-moneyLevel SMALLINT not null DEFAULT 1, -- Make a trigger that checks so that AmountOnCharachter can not get higher than moneyLevel.Amount
-bankID INT NOT NULL,
+Amount MONEY, -- Make a trigger if it gets full 
+MoneyFull Money, -- Make a trigger
 Respect DECIMAL,
 
-CONSTRAINT FK__User_GameCharacter FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
-CONSTRAINT FK__User_MoneyLevel FOREIGN KEY (moneyLevel) REFERENCES Gaming.moneyLevel([level]),
-CONSTRAINT FK__User_Bank FOREIGN KEY (bankID) REFERENCES Gaming.Bank(bankID)
+CONSTRAINT FK__User_GameCharacter FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
-
 
 CREATE TABLE Gaming.GameStats
 (
