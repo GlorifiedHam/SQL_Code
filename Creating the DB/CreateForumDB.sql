@@ -32,7 +32,6 @@ END
 
 go
 
-
 CREATE SCHEMA [Site];
 GO
 CREATE SCHEMA Gaming;
@@ -44,7 +43,13 @@ GO
 CREATE SCHEMA Inventory;
 GO
 
-
+CREATE TABLE Internal.[Role](
+RoleID INT IDENTITY PRIMARY KEY,
+RoleRank int,
+Check(RoleRank BETWEEN 1 AND 12),
+RoleName NVARCHAR(100) DEFAULT 'Member' NOT NULL,
+CHECK (RoleName = 'Member' OR Rolename = 'Donator' OR RoleName = 'VIP' OR RoleName = 'SuperVIP' OR RoleName = 'Moderator' OR RoleName = 'ForumModerator' OR RoleName = 'ServerModerator' OR RoleName = 'SuperModerator' OR RoleName = 'Admin' OR RoleName = 'ForumAdmin' OR RoleName = 'ServerAdmin' OR RoleName = 'SuperAdmin'),
+)
 
 CREATE TABLE [Site].[User](
 UserID INT IDENTITY PRIMARY KEY,
@@ -56,7 +61,10 @@ Age DATE NOT NULL,
 Email NVARCHAR(300) NOT NULL,
 [Amount of entries] INT, --Trigger on creating an entry
 Phonenumber VARCHAR(22) CHECK(Phonenumber > 0), 
-RegDATE DATE DEFAULT GETDATE()
+RegDATE DATE DEFAULT GETDATE(),
+RoleID int default 1,
+
+CONSTRAINT FK__Role_User FOREIGN KEY (RoleID) REFERENCES internal.[Role](RoleID) ON DELETE CASCADE
 );
 
 
@@ -73,17 +81,6 @@ Group2 VARBINARY(2) null,
 Group1 VARBINARY(2) null,
 Network TinyINT null
 )
-
-
-CREATE TABLE Internal.[Role](
-RoleID INT IDENTITY PRIMARY KEY,
-UserID INT NOT NULL,
-RoleName NVARCHAR(100) DEFAULT 'Member' NOT NULL,
-CHECK (RoleName = 'Member' Or RoleName = 'SuperAdmin' OR RoleName = 'Admin' or RoleName = 'Moderator' Or RoleName = 'VIP' ),
-
-CONSTRAINT FK__User_Role FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
-)
-
 
 CREATE TABLE Internal.[Profile](
 ProfileID INT IDENTITY PRIMARY KEY,
@@ -239,7 +236,7 @@ CREATE TABLE Gaming.Players
 (
 PlayerID INT IDENTITY PRIMARY KEY,
 [Name] NVARCHAR(100),
-IPAdressPlayer INT,
+IPAdressPlayerID INT,
 -- Kan man hämta arma3 playerID eller steamID?
 
 CONSTRAINT FK__IPAdressPlayer_Players FOREIGN KEY (IPAdressPlayerID) REFERENCES [Gaming].[IPAdressPlayer](IPAdressPlayerID) ON DELETE CASCADE
