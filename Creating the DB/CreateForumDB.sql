@@ -46,9 +46,9 @@ GO
 CREATE TABLE Internal.[Role](
 RoleID INT IDENTITY PRIMARY KEY,
 RoleRank int,
-Check(RoleRank BETWEEN 1 AND 12),
-RoleName NVARCHAR(100) DEFAULT 'Member' NOT NULL,
-CHECK (RoleName = 'Member' OR Rolename = 'Donator' OR RoleName = 'VIP' OR RoleName = 'SuperVIP' OR RoleName = 'Moderator' OR RoleName = 'ForumModerator' OR RoleName = 'ServerModerator' OR RoleName = 'SuperModerator' OR RoleName = 'Admin' OR RoleName = 'ForumAdmin' OR RoleName = 'ServerAdmin' OR RoleName = 'SuperAdmin'),
+Check(RoleRank BETWEEN 0 AND 12),
+RoleName NVARCHAR(100),
+CHECK (RoleName = 'Guest' OR RoleName = 'Member' OR Rolename = 'Donator' OR RoleName = 'VIP' OR RoleName = 'SuperVIP' OR RoleName = 'Moderator' OR RoleName = 'ForumModerator' OR RoleName = 'ServerModerator' OR RoleName = 'SuperModerator' OR RoleName = 'Admin' OR RoleName = 'ForumAdmin' OR RoleName = 'ServerAdmin' OR RoleName = 'SuperAdmin'),
 )
 
 CREATE TABLE [Site].[User](
@@ -117,31 +117,34 @@ CREATE TABLE Forum.GlobalCategory
 (
 GlobalCategoryID INT IDENTITY PRIMARY KEY,
 UserID INT,
-[Read] NVARCHAR(50) DEFAULT 'Member', 
+[Read] INT, 
 GlobalCategoryName NVARCHAR(200) NOT NULL,
 
-CONSTRAINT FK__User_GlobalCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+CONSTRAINT FK__User_GlobalCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
+CONSTRAINT FK_Roles_GlobalCategory FOREIGN KEY ([Read]) REFERENCES Internal.[Role](RoleID)
 )
 
 
 CREATE TABLE Forum.SubCategory
 (
 SubCategoryID INT IDENTITY PRIMARY KEY,
-[Read] NVARCHAR(50) DEFAULT 'Member', 
-[Write] NVARCHAR(50) DEFAULT 'Member',
+[Read] INT DEFAULT 1, 
+[Write] INT DEFAULT 1,
 UserID INT,
 SubCategoryName NVARCHAR(200) NOT NULL,
 GlobalCategoryID INT,
 
 CONSTRAINT FK__User_SubCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
-CONSTRAINT FK__GlobalCategoryID_SubCategory FOREIGN KEY (GlobalCategoryID) REFERENCES Forum.GlobalCategory(GlobalCategoryID)
+CONSTRAINT FK__GlobalCategoryID_SubCategory FOREIGN KEY (GlobalCategoryID) REFERENCES Forum.GlobalCategory(GlobalCategoryID),
+CONSTRAINT FK_Roles_SubCategory_Read FOREIGN KEY ([Read]) REFERENCES Internal.[Role](RoleID),
+CONSTRAINT FK_Roles_SubCategory_Write FOREIGN KEY ([Write]) REFERENCES Internal.[Role](RoleID)
 )
 
 CREATE TABLE Forum.Thread
 (
 ThreadID INT IDENTITY PRIMARY KEY,
-[Read] NVARCHAR(50) DEFAULT 'Member', 
-[Write] NVARCHAR(50) DEFAULT 'Member',
+[Read] INT DEFAULT 1, 
+[Write] INT DEFAULT 1,
 UserID INT,
 ThreadTitle NVARCHAR(200) NOT NULL,
 SubCategoryID INT,
@@ -151,7 +154,9 @@ locked BIT DEFAULT 0,
 
 CONSTRAINT FK__User_Thread FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
 CONSTRAINT FK__SubCategory_Thread FOREIGN KEY (SubCategoryID) REFERENCES Forum.SubCategory(SubCategoryID),
-CONSTRAINT FK_GlobalCategory_Thread FOREIGN KEY(GlobalCategoryID) REFERENCES Forum.GlobalCategory(GlobalCategoryID) 
+CONSTRAINT FK_GlobalCategory_Thread FOREIGN KEY(GlobalCategoryID) REFERENCES Forum.GlobalCategory(GlobalCategoryID) ,
+CONSTRAINT FK_Roles_Thread_Read FOREIGN KEY ([Read]) REFERENCES Internal.[Role](RoleID),
+CONSTRAINT FK_Roles_Thread_Write FOREIGN KEY ([Write]) REFERENCES Internal.[Role](RoleID)
 )
 
 CREATE TABLE Forum.ForumEntry
