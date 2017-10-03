@@ -68,6 +68,18 @@ CONSTRAINT FK__Role_User FOREIGN KEY (RoleID) REFERENCES internal.[Role](RoleID)
 );
 
 
+CREATE TABLE Internal.AccountBan
+(
+UserID INT,
+AccountBanID INT IDENTITY PRIMARY KEY,
+Reason NVARCHAR,
+Severity INT, -- 1-10
+HowLong DATE,
+BanDate Date,
+
+CONSTRAINT FK__User_AccountBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+)
+
 CREATE TABLE [Site].[IPAdress]
 (
 IPAdress INT NOT NULL IDENTITY PRIMARY KEY,
@@ -124,7 +136,6 @@ CONSTRAINT FK__User_GlobalCategory FOREIGN KEY (UserID) REFERENCES [Site].[User]
 CONSTRAINT FK_Roles_GlobalCategory FOREIGN KEY ([Read]) REFERENCES Internal.[Role](RoleID)
 )
 
-
 CREATE TABLE Forum.SubCategory
 (
 SubCategoryID INT IDENTITY PRIMARY KEY,
@@ -176,7 +187,6 @@ Announcement INT IDENTITY PRIMARY KEY,
 [Message] NVARCHAR(3000),
 Kind NVARCHAR NOT NULL, 
 CHECK (Kind = 'Server' OR Kind = 'Forum' OR Kind = 'HomePage' OR Kind='Important' OR Kind = 'Other')
-
 )
 
 
@@ -237,17 +247,6 @@ Group1 VARBINARY(2) null,
 Network TinyINT null
 )
 
-CREATE TABLE Gaming.Players
-(
-PlayerID INT IDENTITY PRIMARY KEY,
-[Name] NVARCHAR(100),
-IPAdressPlayerID INT,
--- Kan man hämta arma3 playerID eller steamID?
-
-CONSTRAINT FK__IPAdressPlayer_Players FOREIGN KEY (IPAdressPlayerID) REFERENCES [Gaming].[IPAdressPlayer](IPAdressPlayerID) ON DELETE CASCADE
- 
-)
-
 CREATE TABLE Gaming.[Server]
 (
 ServerID INT IDENTITY PRIMARY KEY,
@@ -255,8 +254,8 @@ ServerID INT IDENTITY PRIMARY KEY,
 [Online] BIT NOT NULL,
 LastCHECK DATE,
 MaxPlayers INT,
-Players INT,
-UniquePlayers INT, --Make a trigger
+NumberOfPlayers INT,
+UniquePlayers INT, -- Kan hämtas från players genom en trigger
 HeadMod NVARCHAR,
 Map NVARCHAR, 
 Mods NVARCHAR,
@@ -270,6 +269,17 @@ PlayerAIKills int, --Player killed AI
 AIPlayerKills int, --AI killed Player
 )
 
+CREATE TABLE Gaming.Players
+(
+PlayerID INT IDENTITY PRIMARY KEY,
+[Name] NVARCHAR(100),
+IPAdressPlayerID INT,
+PlayerIdentity INT,
+LastServerID INT,
+
+CONSTRAINT FK__IPAdressPlayer_Players FOREIGN KEY (IPAdressPlayerID) REFERENCES [Gaming].[IPAdressPlayer](IPAdressPlayerID) ON DELETE CASCADE,
+CONSTRAINT FK__Server_Players FOREIGN KEY (LastServerID) REFERENCES [Gaming].[Server](ServerID)
+)
 
 CREATE TABLE Gaming.IPAdressServer
 (
@@ -303,6 +313,16 @@ AIPlayerKills int, --AI killed Player
 
 
 CONSTRAINT FK__Server_Server24 FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
+)
+
+CREATE TABLE UniquePlayers24
+(
+UniquePlayer24ID INT IDENTITY PRIMARY KEY,
+ServerID INT,
+PlayerID INT,
+
+
+CONSTRAINT FK__Server24_UniquePlayers24 FOREIGN KEY (ServerID) REFERENCES Gaming.Server24(Server24ID) ON DELETE CASCADE
 )
 
 CREATE TABLE Gaming.ServerStats
@@ -347,19 +367,6 @@ BanDate Date,
 CONSTRAINT FK__User_ForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
-CREATE TABLE Internal.AccountBan
-(
-UserID INT,
-AccountBanID INT IDENTITY PRIMARY KEY,
-Reason NVARCHAR,
-Severity INT, -- 1-10
-HowLong DATE,
-BanDate Date,
-
-CONSTRAINT FK__User_AccountBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
-)
-
-
 CREATE TABLE Gaming.GameCharacter
 (
 GameCharacterID INT IDENTITY PRIMARY KEY,
@@ -393,46 +400,3 @@ MoneyLostWhenKilledFull int default 0,
 
 CONSTRAINT FK__User_GameStats FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
-
-
-
-
-/*
-ALTER TABLE MessageSend
-DROP CONSTRAINT FK__User_MessageSender
-
-ALTER TABLE MessageSend
-DROP CONSTRAINT FK__User_UsernameReciver 
-
-
-ALTER TABLE MessageSend
-ALTER COLUMN
-UsernameSender NVARCHAR(100) COLLATE Latin1_General_CS_AI;
-
-ALTER TABLE MessageSend
-ALTER COLUMN
-UsernameReciver NVARCHAR(100) COLLATE Latin1_General_CS_AI;
-
-
-ALTER TABLE [Site].[User]
-alter column 
-Username NVARCHAR(100) COLLATE Latin1_General_CS_AI;
-
-ALTER TABLE[Site].[User]
-alter column 
-[Password] NVARCHAR(100) COLLATE Latin1_General_CS_AI;
-
-ALTER TABLE MessageSend
-add CONSTRAINT FK__User_MessageSender FOREIGN KEY (UsernameSender ) REFERENCES [Site].[User](Username)
-
-ALTER TABLE MessageSend
-add CONSTRAINT FK__User_UsernameReciver FOREIGN KEY (UsernameReciver ) REFERENCES [Site].[User](Username)
-
-ALTER TABLE [Site].[User]
-add CONSTRAINT [Unique_User] unique NONCLUSTERED 
-(
-	username ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
-
-*/
