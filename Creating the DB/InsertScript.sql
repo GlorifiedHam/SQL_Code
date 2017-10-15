@@ -1,6 +1,6 @@
-﻿-- Insert script
+﻿-- Insert scripUSE ForumDB
 USE ForumDB
-go
+GO
 
 -- Insert into Role
 INSERT INTO [Internal].Role
@@ -11,8 +11,8 @@ GO
 Insert into [Site].[User]
 ([Username], [Firstname], [Lastname], [Age], [Password], [Email], [Amount of entries], [Phonenumber], [RegDATE], [RoleID])
 Values
-('GlorifiedHam','Alexander','Jansson','1994-04-04', 'War2Glory', 'Alexanderjan94@gmail.com',0,0704335884, default, 13),
-('Rival','Jimmie','Petersson','1993-09-05','WowIsBest213', 'Jimmy@gmail.com',0,0765437869, '2017-7-31', 12),
+('GlorifiedHam','Alexander','Jansson','1994-04-04', 'War2Glory', 'Alexanderjan94@gmail.com',0,0704335884, '2017-07-20', 13),
+('SpookyOwl','Jimmy','Palmberg','1993-09-05','WowIsBest213', 'Jimmy@gmail.com',0,0765437869, '2017-07-31', 12),
 ('Wardawg','Tom','karlsson','1967-06-19', 'qwerty123', 'Tom@live.se',0,0705467781, default, 2),
 ('SilverStorm','Amanda','Ekström','1996-03-22', 'qwerty123', 'Amanda@live.se',0,2515469442, default, 5),
 ('LongTime','Sara','Hewitt','1990-11-12', 'qwerty123', 'Sara@gmail.com',0,9495694371, default, 3),
@@ -27,10 +27,10 @@ GO
 
 -- Insert banned users
 INSERT INTO Internal.AccountBan
-(UserID, Reason, Severity, HowLong, BanDate)
+(UserID, BannersID, Reason, DisplayReason, Severity, HowLong, BanDate)
 VALUES 
-(11,'Spamm Account', 10, Cast('2317-01-01' AS DATETIME), getDate() ),
-(12,'Harassment',3, CAST('2017-11-05' AS DATETIME), getDate())
+(11, 1,'Spamm Account','Spam', 10, Cast('2317-01-01' AS DATETIME), getDate() ),
+(12, 2, 'Harassment','Harassment', 3, CAST('2017-11-05' AS DATETIME), getDate())
 GO
 
 -- INSERT User IP
@@ -82,11 +82,32 @@ INSERT INTO Internal.Picture
 (UserID, Picture, [Name], DateAdded)
 values (3, @picture4,'Code', DEFAULT)
 
+INSERT INTO Internal.[Profile]
+(UserID, PicAvatarID, [Description])
+VALUES
+(1, 13, 'Hello /E
+		I am a 23 year old programming student that loves games and coding. /E
+		I hope to be able to regurlarily push out tweaks and updates, but please be patient. /E'),
+(2, 15, 'Hi /E 
+		I am part of the staff here at greasy gaming. My hopes are that I am going to help this community grow and thrive
+		I am a gamer first and foremost, but I am also somewhat of a programmer.' ),	
+(3, 3, 'Hello Tom here, a full fledged gamer that works at a construction firm. '),
+(4, 4, 'Not sure what I should put here. \E
+		I love games just like everyone else on this platform. I hope that we all will have a wonderful time together'),
+(5, 5,  '<B>Arma3</B> is love, <B>Arma3</B> is life'),
+(6, 6, null),
+(7, 7, null),
+(8, 8, null),
+(9, 9, null),
+(10, 10, null),
+(11, 11, null),
+(12, 12, null)
+
 -- INSERT sent messages 
 INSERT INTO [Site].MessageSend
 (SenderID, ReciverID, DateSent, [Message], title, [read])
 VALUES
-(1, 2, '2017-08-10 08:00', '<h2>Hello</h2> \n Do you have any ideas for new features? Have you made any updates to the testing gaming server? For some reason I cant open the changelog :P', 'Updates', 1),
+(1, 2, '2017-08-10 08:00', '<li>Hello</li> \n Do you have any ideas for new features? Have you made any updates to the testing gaming server? For some reason I cant open the changelog :P', 'Updates', 1),
 (1, 2, '2017-08-15 12:32', 'Hi again \n I still have the same problem, sorry that I am pushy ^^', 'Updates V2', 1),
 (2 ,1, '2017-08-16 15:45', '<3>Hi Sorry</h3>, I have not been home for some days. \n Well I dont have any new ideas at the moment. I have made some changes to the test gaming server. The changelog should be working now, so I am not going to send everything here again. Please send me text if you still cant see the changes to the changelog, but like I said it should be working now.', 'RE: Updates V2', 1),
 (1, 2, '2017-08-16 16:33', 'Thanks \n The changelog is now working, gj :)', 'RE: Updates V2', 1),
@@ -98,8 +119,7 @@ VALUES
 (1, 8, '2017-09-01 10:16', 'Quick six blind smart out burst. Perfectly on furniture dejection determine my depending an to. Add short water court fat. Her bachelor honoured perceive securing but desirous ham required. Questions deficient acuteness to engrossed as. Entirely led ten humoured greatest and yourself. 
 Besides ye country on observe. She continue appetite endeavor she judgment interest the met. For she surrounded motionless fat resolution may.', 'Water', 1),
 (1, 7, '2017-09-02 19:17', 'Of on affixed civilly moments promise explain fertile in. Assurance advantage belonging happiness departure so of. Now improving and one sincerity intention allowance commanded not. Oh an am frankness be necessary earnestly advantage estimable extensive. Five he wife gone ye. Mrs suffering sportsmen earnestly any. In am do giving to afford parish settle easily garret.', 'Garret!', 1),
-(1, 6, '2017-09-03 09:25', '
-His exquisite sincerity education shameless ten earnestly breakfast add. So we me unknown as improve hastily sitting forming. Especially favourable compliment but thoroughly unreserved saw she themselves. Sufficient impossible him may ten insensible put continuing. Oppose exeter income simple few joy cousin but twenty. Scale began quiet up short wrong in in. Sportsmen shy forfeited engrossed may can.', 'Sportsmen', 1),
+(1, 6, '2017-09-03 09:25', 'His exquisite sincerity education shameless ten earnestly breakfast add. So we me unknown as improve hastily sitting forming. Especially favourable compliment but thoroughly unreserved saw she themselves. Sufficient impossible him may ten insensible put continuing. Oppose exeter income simple few joy cousin but twenty. Scale began quiet up short wrong in in. Sportsmen shy forfeited engrossed may can.', 'Sportsmen', 1),
 (6, 1, '2017-09-03 12:14', 'Surprise steepest recurred landlord mr wandered amounted of. Continuing devonshire but considered its. Rose past oh shew roof is song neat. Do depend better praise do friend garden an wonder to. Intention age nay otherwise but breakfast. Around garden beyond to extent by. ', 'Surprise', 0)
 GO
 
@@ -107,12 +127,12 @@ GO
 INSERT INTO Forum.GlobalCategory
 (UserID, [Read], GlobalCategoryName)
 VALUES
-(1, 0, 'Rules'),
-(1, 0, 'Staff'),
-(1, 0, 'Servers'),
-(1, 0, 'Tips & Tricks'),
-(1, 0, 'General Discussion'),
-(1, 0, 'Suggestions' ),
+(1, 1, 'Rules'),
+(1, 1, 'Staff'),
+(1, 1, 'Servers'),
+(1, 1, 'Tips & Tricks'),
+(1, 1, 'General Discussion'),
+(1, 1, 'Suggestions' ),
 (1, 6, 'Staff Discussion')
 GO
 
@@ -130,71 +150,232 @@ VALUES
 (1, 2, 1, 'Game Tips', 4),
 (1, 2, 1, 'Other Tips', 4),
 (1, 2, 1, 'Discussions', 5),
-(1, 2, 1, 'Stories', 5),
-(1, 2, 1, 'Alpha Server', 6), 
-(1, 2, 1, 'Bravo Server', 6), 
-(1, 2, 1, 'Zed Server', 6), 
+(1, 2, 1, 'Looking for a group, a clan or just someone to play with?', 5),
 (1, 2, 1, 'Site', 6), 
 (1, 2, 1, 'Forum', 6), 
 (1, 2, 1, 'Other', 6), 
-(6, 6, 1, 'Staff Rules', 7),
-(6, 6, 1, 'Discussions', 7),
-(6, 6, 1, 'Admin Discussions', 10)
+(6, 6, 1, 'Staff fun', 7) -- Add a new GCategory called events?
 GO
 
 INSERT INTO Forum.Thread
 ([Read], [Write], UserID, ThreadTitle, SubCategoryID, Locked)
 VALUES
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1)
+(1, 10, 1, 'Forum Regler', 1, 0 ),
+(1, 10, 1, 'Exile Server Rules', 2, 0),
+(1, 10, 1, 'KOH Server Rules', 2, 0),
+(1, 10, 1, 'Account Rules', 2, 0),
+(6, 10, 1, 'Server Rules', 3, 0),
+(6, 10, 1, 'Moderator forum rules', 3, 0),
+(10, 10, 1, 'Admin Tool usage', 3, 0),
+(6, 10, 1, 'Disputes between staff members', 3, 0),
+(1, 2, 1, 'Admin: GlorifiedHam', 4, 0),
+(1, 2, 2, 'Moderator: SpookyOwl', 4, 0),
+(1, 10, 1, 'Change Log', 5, 0),
+(1, 10, 1, 'Change Log', 6, 0),
+(1, 10, 1, 'Change Log', 7, 0),
+(1, 2, 1, 'Suggestions', 5, 0),
+(1, 2, 1, 'Suggestions', 6, 0),
+(1, 2, 1, 'Suggestions', 7, 0),
+(1, 2, 2, 'Some General tips from the staff', 8, 0),
+(1, 2, 4, 'Sounds bugs/Problems', 8, 0),
+(1, 2, 4, 'You can actually buy tactical bacon', 9, 0),
+(1, 2, 1, 'What is your favourite Arma3 rifle?', 10, 0),
+(1, 2, 2, 'What game mods do you love/ hate/ play and why?', 10, 0),
+(1, 2, 1, 'Want someone to play with?', 11, 0),
+(1, 2, 4, 'Hi we are a group of three people that are looking to expand', 11, 0),
+(1, 2, 1, 'Is there something that are bugging you about the site?, something that you miss?. Then please post a suggestion.', 12, 0),
+(1, 2, 1, 'Darn I wished they had that, I really unlike this feature. Do you have any of these thoughts, or any suggestions please make a post.', 13, 0),
+(1, 2, 1, 'Do you have any suggestions that are not server, game or site related? Then please make a post here.', 14, 0),
+(1, 2, 1, 'Tell us your best/ worst joke',15, 0)
+
 GO
 
 INSERT INTO Forum.ForumEntry
-(UserID, [Entry], UserID, ThreadID, Edited, LastEdited, Created)
+(UserID, [Entry], ThreadID, Edited, LastEdited, Created)
 VALUES
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1)
+(1,
+'<ol> 
+<li>Well being</li>
+<ol> 
+<li> Be nice and respect others </li>
+<li> Statements that may be perceived as offensive or slanderous are not allowed. Please debate, but do not let it turn into a circus.</li>
+<li> Personal affairs, private discussions and so on does not belong in the forum. Instead, use the private message feature</li>
+<li> It is not allowed to spread or link to pornography.</li>
+<li> Its not okay to provoke people just to tentalize them into a angry respone (trolling)</li>
+<li> Posts that are pointless and does not contribute to the discussion is prohibited. Some examples: links without description or context, posts that only contains a quote, posts that expresses discontent without grounds or an explanation. </li>
+</ol>
+
+<ol>
+<li>Read this before you craete a thread</li>
+<p>To avoid repeating the same questions and discussions over and over again:</p>
+<ol> 
+<li> Read the threads in the suitable subcategory </li>
+<li> Use the search function to look for a thread with a similar/ the same topic</li>
+</ol>
+
+<ol> 
+<li>Read this when creating a thread</li>
+<p>Firstly read rule 2</p>
+<ol> 
+<li>The heading shall clearly state what the thread is about</li>
+<li>Threads should be placed in the best suitable part of the forum. If you are unsure where your thread should be placed, create the thread in a place you think is appropriate. After that report your own post as a missplaced thread,  a moderator will now move the thread for you if needed.  </li>
+<li>It is not allowed to create multiple threads about the same topic. This applies regardless of whether the threads are placed in the same or different part of the forum.</li>
+<li>If a moderator has locked a thread, you are not allowed to recreat it. </li>
+</ol>
+
+<ol> 
+<li>Bumping</li>
+<ol> 
+<li>It is not okay to post posts which entirely purpose is to move the thread higher up in the listing. However, it is permitted to write multiple posts in a row, provided each new posts adds new context to the discussion.</li>
+</ol>
+
+<ol> 
+<li>Report inappropriate posts</li>
+<ol> 
+<li>As a member you are able to report suspected violations by clicking the "report" button. Please use this feature, but do not put information about suspected violations inside the thread </li>
+</ol>
+
+<ol> 
+<li>Signatures and avatars</li>
+<ol> 
+<li>Avatars may not be animated and may not represent or resemble something that may be perceived as offensive. </li>
+<li>Avatars and signatures are considered  to be personal. Therefore, do not use another user''s signature or avatar without permission<li>
+</ol>
+
+<ol> 
+<li>Piracy</li>
+<ol>
+<li>It is forbidden to spread links to pirated copies. It is also not permitted to discuss how to circumvent copy protection or illegally copy copyrighted works. Any hint of possession of pirated material is prohibited. It does not metter if it is legal to make copies of what you discussing, our moderators does not possess a law degree. Therefor they can not judge each case individually</li>
+</ol>
+
+<ol> 
+<li>Crime</li>
+<ol> 
+<li>It is strictly forbidden to request, invite, or exhort criminal acts</li>
+</ol>
+
+<ol> 
+<li>Marketing and advertisement</li>
+<ol> 
+<li>You may not use the forum to advertise or market your own or other''s business <li>
+</ol>
+
+<h2>Rights</h2>
+<p>We claim no ownership of user-generated information. However, by using our services, posting text, images, or using other media you give us unlimited permission to reproduce, adapt and publish material globally royalty-free. </p>
+
+<h2>Personal integrity</h2>
+<p>All incoming data communications are stored, including IP addresses and other metadata. The stored information can be used to investigate and monitor any abuse of the service.</p>
+
+<p>Villkor och regler kan ändras. Om så sker meddelas ändringen i forumet. </p>
+</ol>
+', 1, 0, null, getDAte()),
+
+(1,
+'
+<ul>
+<li> Do not use voice chat in  the side- or global channel. <li/>
+<li> You may not troll or use music in any chat</li>
+<li> Real life threats equals a permanent ban</li>
+<li> Racism, hate speech, griefing or harassment will result in a ban</li>
+<li> You may not use vehicles to ram other vehicles inside trader zones <li/>
+<li> You may not use bicycles to ram other vehicles anywhere on the map <li/>
+<li> No glitching into bases, walls, objects and so on<li/>
+<li> No Exploitin, Hacking or Duping<li/>
+<li> You may not spawn camp<li/>
+<li> You may not combatlog</li>
+<li> You are not allowed to build within 1000m form a trader<li/>
+<li> You are not allowed to build within 750m of barracks, bridges, hospitals, firestations, supermarkets, military buildings, spawn, roads or high industrial areas<li/>
+<li> English is the only allowed language in side channel chat. You''re welcome to use other languages in other chat channels</li>
+<li> Respect all players and admins<li/>
+<li> You may not callouts the location of the person that killed you in side chat</li>
+<li> Do not argue with an admin in-game, If you want to discuss something please contact use thru our webpage. For more pressing issues please contact us via our teamspeak<li/>
+<li> You may not advertise</li>
+</ul>
+', 2, 0, null, getDate()),
+
+(1, 
+'
+<ul>
+<li>You may not troll or use music in any chat</li>
+<li>Real life threats equals a permanent ban</li>
+<li>Racism, hate speech, griefing or harassment will result in a ban</li>
+<li>Team killing on purpes will result in a ban. You may even get banned if you get team kills because you were incautious</li>
+<li>No Exploitin, Glitching, Hacking or Duping </li>
+<li>Anyone found "stealing" from teammates will receive a ban, this includes looting teammates waiting to be revived.</li>
+<li >Do not argue with an admin in-game, If you want to discuss something please contact use thru our webpage. For more pressing issues please contact us via our teamspeak<li/>
+<li>You may not advertise</li>
+<li></li>
+<li></li>
+</ul>
+', 3, 0, null, getDate()),
+
+(1, '
+<h2>User-generated information</h2>
+<p>Anyone can register an account and use our services here at Greasy Fingers gaming. All posts in the forum, galleries and so on are user-generated information, which does not reflect our views or opinions. </p>
+
+<h2> Accounts </h2>
+<p>User accounts are personal and may not be sold or transferred. Only one account per person is allowed. You are not allowed to register a new account if your old one is suspended. In order to prevent abuse we will not delete account associated information will not be deleted on request. It is possible to change username by contacting (insert link) us.</p>
+
+<h2>Rights</h2>
+<p>We claim no ownership of user-generated information. However, by using our services, posting text, images, or using other media you give us unlimited permission to reproduce, adapt and publish material globally royalty-free. </p>
+
+<h2>Personal integrity</h2>
+<p>All incoming data communications are stored, including IP addresses and other metadata. The stored information can be used to investigate and monitor any abuse of the service.</p>
+', 4, 0, null, getDate()),
+
+(1, 
+'
+<h2>Baning/ warnings</h2>
+<p>Treat everyone equally! </p>
+<p>First of all you always need a reason to warn, mute or ban a user/player which you will put into the "reason" field when you send out a mute, ban or warning /E </p>
+<h3>Ban time</h3>
+<p>Minor offenses start with a warning/mute or two after that 24h ban, 72h ban, 7days, 30days then a permanent ban.</p>
+<p>Middle offenses start with ONE warning or straight up 48h ban, 7 days, permanent ban </p>
+<p>Sever offenses equals a permanent ban. 
+<h3>What is a minor, middle and sever offense?</h3>
+<p>First of all your own logic, becuase some times it can be hard to decide what is what, but here are some examples</p>
+<p>Calling someone cheater in the in game chat. Verdict: Its a minor offense, send them a warning if they dont stop mute them </p>
+<p>Rage Teamkilling two teammates. Verdict: Its a middle offense that does not require a warning ban them for 48h </p>
+<p>Teamkilling two teammates. Verdict: If it was not on purpes this might not be an offense at all. It all depends on if the person of question was incautious, and if the person in question is a repeat offender. This is up to the assigned admin to decide</p>
+<p>Being racist equals a permanent ban </p>
+
+<h3>Redemption</h3>
+<p>Anyone can make their case once with an admin, but if the admin does not find the user''s case to be sufficient the ban stays</p>
+
+<h2>In game</h2>
+<p>Do not feed the trolls!. Do not engage in discussions in the in game chat. You may ask them to take the discussion to the forum or into teamspeak with on of our admins/ moderators. /E
+If the discussion gets out of hand send out warnings to the participants, and again you may ask them to move the discussion into the forum or teamspeak, but do not engage in the debate!. /E
+If the participants of the discussion does not comply with the warnings, depending on the severity of the discussion mute or ban them. </p>
+', 5, 0, null, getDate()),
+
+
+(1, 'Hello, I am GlorifiedHam/E 
+		  I am a 23 year old programming student that loves coding. /E
+		  I hope to be able to regurlarily push out tweaks and updates, but please be patient. /E
+		  Please use the suggestion thread if you have any ideas or tips for the future of this site. ', 9, 0, null, getDate()),
+(3, 'Hi mate. Good luck with the admin role. /E Best Regards ', 9, 0, null, getDate()),
+(5, 'Finally we have a webpage and a forum at our disposal. GjGj!, :)', 9 , 0, null, getDate()),
+(2, 'Hi SpookyOwl here, ready to take on the challenge of being a moderator /E
+	Who am I? I am a 24 year old gamer, programmer and a philosopher. /E
+	I am super excited to be part of the team here at Greasy Fingers Gaming, and I hope to be able to contribute as much as possible. \E
+	Best Regards //Spooky 
+', 10, 0, null, getDate()),
+(1, ''),
+(1, ''),
+(1, '')
 GO
 
 INSERT INTO [Site].Announcement
 ([Message], Kind)
 VALUES
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1),
-(1)
+('Thre will be a Webpage maintenance 2017-20-20', 'HomePage')
 GO
 
 INSERT INTO [Site].News
 (UserID, [Text], DatePosted, Likes, clicks)
 VALUES
 (1),
-(1)
+
 
 INSERT INTO [Site].NewsPrictures
 (Picture, NewsID)
@@ -217,10 +398,11 @@ VALUES
 INSERT INTO Gaming.[Server]
 ([Name], [Online], LastCHECK, MaxPlayers, NumberOfPlayers, UniquePlayers, HeadMod, Map, Mods, LastServerReset, Resets, Bans, MoneyCirculatedInShop, MissionsDone, PlayerKills, PlayerAIKills, AIPlayerKills )
 VALUES
-('GreasyFZ Exile Holm', 1),
-('GreasyFZ Exile Altis', 1),
-('GreasyFz Exile Cherno', 1),
-('GreasyFZ KingOfTheHill Altis', 1)
+('GreasyFS Exile Alpha', 1, getDate(), 100,  ),
+('GreasyFS Exile Bravo', 1, getDate(), 64,  ),
+('GreasyFS KingOfTheHill Zed', 1, getDate(), 100, )
+
+--IPAddressServer
 
 INSERT INTO Gaming.[IPAddressServer]
 (Group8, Group7, Group6, Group5, Group4, Group3, Group2, Group1, Network, ServerID)
@@ -228,94 +410,64 @@ VALUES
 (),
 ()
 
+--Insert Into account forum ban
 
---Insert profile
+INSERT INTO Forum.AccountForumBan
+(UserID, BannersID, Reason, DisplayReason, Severity, HowLong, BanDate)
+VALUES
+(9, 1,'Created way to many new subcategories','We sent you several warnings not to create any more subcategories, unless there was a need for them', 10, Cast('2017-11-01' AS DATETIME), getDate()),
+(12, 2, 'Harassment','Harassment', 3, CAST('2017-11-15' AS DATETIME), getDate())
 
+INSERT INTO Gaming.Players
+([Name], PlayerIdentity, LastServerID)
+VALUES
+(),
+(),
+()
 
---Insert into message
-INSERT INTO MessageSend
-values (1,2,'What should we do next?','Next step for the site', default)
+INSERT INTO Gaming.IPAddressPlayer
+(PlayerID, Group8, Group7, Group6, Group5, Group4, Group3, Group2, Group1, Network)
+VALUES
+(),
+()
 
-INSERT INTO MessageSend
-values (3,4,'Hi','Hi', default)
+INSERT INTO Gaming.Server24
+(ServerID, UniquePlayers, Bans, MoneyCirculatedInShop, MissionsDone, PlayerKills, PlayerAIKills, AIPlayerKills)
+VALUES
+(1),
+(2),
+(3),
+(4)
 
-INSERT INTO MessageSend
-values (2,6,'Do you like the site?','The site', default)
+INSERT INTO Gaming.UniquePlayers24
+(ServerID, PlayerID)
+VALUES
+(),
+(),
+()
 
-INSERT INTO SubCategory
-Values(default,default,1,'Forum Roles',1)
+INSERT INTO Gaming.ServerStats
+(ServerID, UniquePlayers, Bans, PlayerKills, PlayerAIKills, AIPlayerKills, MoneyCirculatedInShop, FullMoney, MissionsDone)
+VALUES
+(1,),
+(2,),
+(3,)
 
-INSERT INTO SubCategory
-Values(default,default,1,'Future',2)
+INSERT INTO Gaming.ServerBan
+(ServerID, PlayerID, Reason, Severity, HowLong, BanDate )
+VALUES
+(),
+(),
+()
 
-INSERT INTO SubCategory
-Values(default,default,1,'Staff Introduction',3)
+INSERT INTO Gaming.GameCharacter
+(UserID, BackpackSlot, HeadSlot, VestSlot, WatchSlot, CompassSlot, RadioSlot, MapSlot, BinocularSlot, NVGSlot, PrimarySlot, GPSSlot, LauncherSlot, SecondarySlot, ChatacterName, HP, FoodLevel, WaterLevel, x, y, Alive, kills, Amount, MoneyFull, Respect)
+VALUES
+(),
+()
 
-INSERT INTO SubCategory
-Values (default,default, 'Arma3', 4)
-
-INSERT INTO SubCategory
-Values (default,default, 'PUBG' ,4)
-
-INSERT INTO SubCategory
-Values (default,default, 'RPG Games', 4)
-
-INSERT INTO SubCategory
-Values (default,default, 'MOBA Games', 4) 
-
-INSERT INTO SubCategory
-Values (default,default, 'FPS Games', 4)
-
-INSERT INTO SubCategory
-Values (default,default, 'Forum Rules', 5)
-
-Insert INTO Thread
-Values(default,default,1,'Admin: GlorifiedHam',3, default,default)
-
-INSERT INTO Thread
-Values(default,default,2,'Design',2,default,default)
-
-INSERT INTO Thread
-Values(default,default,2,'Languages',1,default,default)
-
-INSERT INTO Thread
-Values(default,default,1,'',)
-
-INSERT INTO ForumEntry
-Values(1,'Hello /E 
-		  I am a 23 year old programming student that loves coding. /E
-		  I hope to be able to regurlarily push out tweaks and updates, but please be patient. /E
-		  Please use the <a>suggestion</> thread if you have any ideas or tips for the future of this site. ',1)
-
-
-INSERT INTO ForumEntry
-Values(2,'Maybe you could make a cool gif background someday?',2)
-INSERT INTO ForumEntry
-Values(1,'Sure it could be a fun thing to do',2)
-
-INSERT INTO ForumEntry
-Values(1,'I will try to add more languages as the site progrecess. If you want a specific language added, please leave a post with the specific language down below.',3)
-INSERT INTO ForumEntry
-Values(3,'I would like German as an option',3)
-INSERT INTO ForumEntry
-Values(3,'Well spanish would be nice, but English is enough for me :)',4)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+INSERT INTO Gaming.GameStats
+(UserID, Kills, Deaths, Revivals, MoneySpent, MoneyLostWhenKilled)
+VALUES
+(),
+()

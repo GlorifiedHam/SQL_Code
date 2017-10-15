@@ -1,4 +1,4 @@
-use master; 
+use master;		
 go
 
 if db_id('ForumDB') is NOT NULL
@@ -185,26 +185,28 @@ Username NVARCHAR(100) NOT NULL UNIQUE,
 Firstname NVARCHAR(1000) NOT NULL,
 Lastname NVARCHAR(1000) NOT NULL,
 Age DATE NOT NULL,
-[Password] NVARCHAR(100) NOT NULL,--Make an old password TABLE, with a trigger, that only saves one pw back?  
-Email NVARCHAR(300) NOT NULL,
+[Password] NVARCHAR(100), --Changes to pw_encrypted 
+Email NVARCHAR(300) NOT NULL UNIQUE,
 [Amount of entries] INT DEFAULT 0, --Trigger on creating an entry
 Phonenumber VARCHAR(22), 
 RegDATE DATE DEFAULT GETDATE(),
-RoleID int DEFAULT 1,
+RoleID int DEFAULT 2,
 
-CONSTRAINT FK__Role_User FOREIGN KEY (RoleID) REFERENCES internal.[Role](RoleID) ON DELETE CASCADE
+CONSTRAINT FK_Role_User FOREIGN KEY (RoleID) REFERENCES internal.[Role](RoleID) ON DELETE CASCADE
 );
 
 CREATE TABLE Internal.AccountBan
 (
 AccountBanID INT IDENTITY PRIMARY KEY,
 UserID INT,
+BannersID INT, -- The one that executed the ban
 Reason NVARCHAR (1000),
+DisplayReason NVARCHAR (1000),
 Severity INT, -- 1-10
 HowLong DATETIME,
 BanDate DATETIME,
 
-CONSTRAINT FK__User_AccountBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+CONSTRAINT FK_User_AccountBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
 CREATE TABLE [Site].[IPAddress]
@@ -221,7 +223,7 @@ Group1 VARBINARY(2) NOT null,
 Network TINYINT null,
 UserID INT,
 
-CONSTRAINT FK__User_IPAddress FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+CONSTRAINT FK_User_IPAddress FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 ALTER TABLE [Site].[IPAddress]
 ADD CONSTRAINT [PK_IPAddress]
@@ -259,7 +261,7 @@ UserID INT NOT NULL,
 DateAdded DateTime NOT NULL DEFAULT GetDate(),
 Picture VarBinary(max) DEFAULT ([dbo].[GetBlobData]()) NOT NULL, -- Vi kan skapa en trigger istället, som skapar en ny pricture TABLE med DEFAULT bilden?
 
-CONSTRAINT FK__User_Picture FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+CONSTRAINT FK_User_Picture FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
 ALTER TABLE Internal.Picture
@@ -267,12 +269,12 @@ ADD CONSTRAINT UQ_UserID_Name UNIQUE(UserId, [Name])
 
 CREATE TABLE Internal.[Profile](
 ProfileID INT IDENTITY PRIMARY KEY,
-UserID INT,
-PicAvatarID INT,
-Description NVARCHAR(3000) NOT NULL,
+UserID INT NOT NULL,
+PicAvatarID INT NOT NULL,
+[Description] NVARCHAR(3000),
 
-CONSTRAINT FK__User_Profile FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
-CONSTRAINT FK__Picture_Profile FOREIGN KEY (PicAvatarID) REFERENCES Internal.Picture(PictureID)
+CONSTRAINT FK_User_Profile FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
+CONSTRAINT FK_Picture_Profile FOREIGN KEY (PicAvatarID) REFERENCES Internal.Picture(PictureID)
 )
 
 -- https://stackoverflow.com/questions/3094495/db-schema-for-chats
@@ -285,8 +287,8 @@ title NVARCHAR(200) NOT NULL,
 DateSent DateTime,
 [read] BIT DEFAULT 0,  
 
-CONSTRAINT FK__User_MessageSender FOREIGN KEY (SenderID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
-CONSTRAINT FK__User_UsernameReciver FOREIGN KEY (ReciverID) REFERENCES [Site].[User](UserID)
+CONSTRAINT FK_User_MessageSender FOREIGN KEY (SenderID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
+CONSTRAINT FK_User_UsernameReciver FOREIGN KEY (ReciverID) REFERENCES [Site].[User](UserID)
 )
 
 CREATE TABLE Forum.GlobalCategory
@@ -296,7 +298,7 @@ UserID INT,
 [Read] INT, 
 GlobalCategoryName NVARCHAR(200) NOT NULL,
 
-CONSTRAINT FK__User_GlobalCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
+CONSTRAINT FK_User_GlobalCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
 CONSTRAINT FK_Roles_GlobalCategory FOREIGN KEY ([Read]) REFERENCES Internal.[Role](RoleID)
 )
 
@@ -309,8 +311,8 @@ UserID INT,
 SubCategoryName NVARCHAR(200) NOT NULL,
 GlobalCategoryID INT,
 
-CONSTRAINT FK__User_SubCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
-CONSTRAINT FK__GlobalCategoryID_SubCategory FOREIGN KEY (GlobalCategoryID) REFERENCES Forum.GlobalCategory(GlobalCategoryID),
+CONSTRAINT FK_User_SubCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
+CONSTRAINT FK_GlobalCategoryID_SubCategory FOREIGN KEY (GlobalCategoryID) REFERENCES Forum.GlobalCategory(GlobalCategoryID),
 CONSTRAINT FK_Roles_SubCategory_Read FOREIGN KEY ([Read]) REFERENCES Internal.[Role](RoleID),
 CONSTRAINT FK_Roles_SubCategory_Write FOREIGN KEY ([Write]) REFERENCES Internal.[Role](RoleID)
 )
@@ -325,10 +327,36 @@ ThreadTitle NVARCHAR(200) NOT NULL,
 SubCategoryID INT,
 Locked BIT DEFAULT 0,
 
-CONSTRAINT FK__User_Thread FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
-CONSTRAINT FK__SubCategory_Thread FOREIGN KEY (SubCategoryID) REFERENCES Forum.SubCategory(SubCategoryID),
+CONSTRAINT FK_User_Thread FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
+CONSTRAINT FK_SubCategory_Thread FOREIGN KEY (SubCategoryID) REFERENCES Forum.SubCategory(SubCategoryID),
 CONSTRAINT FK_Roles_Thread_Read FOREIGN KEY ([Read]) REFERENCES Internal.[Role](RoleID),
 CONSTRAINT FK_Roles_Thread_Write FOREIGN KEY ([Write]) REFERENCES Internal.[Role](RoleID)
+)
+
+CREATE TABLE Forum.ThreadLock
+(
+ThreadLockID INT,
+ThreadID INT,
+Reason NVARCHAR(1000),
+DisplayReason NVARCHAR(1000),
+UserID INT,
+
+CONSTRAINT FK_User_ThreadLock FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
+CONSTRAINT FK_Thread_ThreadLock FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(ThreadID)
+)
+
+CREATE TABLE Forum.AccountForumBan
+(
+AccountForumBan INT IDENTITY PRIMARY KEY,
+UserID INT,
+BannersID INT, -- The one that executed the ban
+Reason NVARCHAR (1000),
+DisplayReason NVARCHAR (1000),
+Severity INT, -- 1-10
+HowLong DATETIME,
+BanDate DATETIME,
+
+CONSTRAINT FK_User_AccountForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
 CREATE TABLE Forum.ForumEntry
@@ -341,8 +369,20 @@ Edited BIT default 0,
 LastEdited DATETIME,
 Created DATETIME,
 
-CONSTRAINT FK__User_ForumEntry FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
-CONSTRAINT FK__Thread_ForumEntry FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(ThreadID)
+CONSTRAINT FK_User_ForumEntry FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
+CONSTRAINT FK_Thread_ForumEntry FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(ThreadID)
+)
+
+CREATE TABLE Forum.ForumBan
+(
+UserID INT,
+ForumBanID INT IDENTITY PRIMARY KEY,
+Reason NVARCHAR,
+Severity INT, -- 1-10
+HowLong DATE,
+BanDate Date,
+
+CONSTRAINT FK_User_ForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
 CREATE TABLE [Site].Announcement
@@ -362,7 +402,7 @@ DatePosted DATE NOT NULL DEFAULT getDATE(),
 Likes INT,
 clicks INT,
 
-CONSTRAINT FK__User_News FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+CONSTRAINT FK_User_News FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
 CREATE TABLE [Site].NewsPrictures
@@ -371,7 +411,7 @@ NewsPricturesID INT IDENTITY PRIMARY KEY,
 Picture VarBinary(max) NOT NULL,
 NewsID INT,
 
-CONSTRAINT FK__News_NewsPrictures FOREIGN KEY (NewsID) REFERENCES [Site].News(NewsID) ON DELETE CASCADE
+CONSTRAINT FK_News_NewsPrictures FOREIGN KEY (NewsID) REFERENCES [Site].News(NewsID) ON DELETE CASCADE
 )
 
 CREATE TABLE [Site].Guide 
@@ -383,7 +423,7 @@ DatePosted DATE NOT NULL DEFAULT getDATE(),
 Likes INT,
 clicks INT,
 
-CONSTRAINT FK__User_Guide FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+CONSTRAINT FK_User_Guide FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
 
 CREATE TABLE [Site].GuidePrictures
@@ -392,7 +432,7 @@ GuidePrictures INT IDENTITY PRIMARY KEY,
 Picture VarBinary(max) NOT NULL,
 GuideID INT,
 
-CONSTRAINT FK__Guide_GuidePrictures FOREIGN KEY (GuideID) REFERENCES [Site].Guide(GuideID) ON DELETE CASCADE
+CONSTRAINT FK_Guide_GuidePrictures FOREIGN KEY (GuideID) REFERENCES [Site].Guide(GuideID) ON DELETE CASCADE
 )
 
 CREATE TABLE Gaming.[Server]
@@ -402,6 +442,7 @@ ServerID INT IDENTITY PRIMARY KEY,
 [Online] BIT NOT NULL,
 LastCHECK DATE,
 MaxPlayers INT,
+CHECK (MaxPlayers >= NumberOfPlayers),
 NumberOfPlayers INT,
 UniquePlayers INT, -- Kan hämtas från players genom en trigger
 HeadMod NVARCHAR,
@@ -431,7 +472,7 @@ Group1 VARBINARY(2) NOT NULL,
 Network TinyINT NULL,
 ServerID INT
 
-CONSTRAINT FK__Server_IPAddress FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE -- Turnicate...
+CONSTRAINT FK_Server_IPAddress FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE -- Turnicate...
 )
 ALTER TABLE Gaming.[IPAddressServer]
 ADD CONSTRAINT [PK_IPAddressServer]
@@ -466,16 +507,13 @@ CREATE TABLE Gaming.Players
 (
 PlayerID INT IDENTITY PRIMARY KEY,
 [Name] NVARCHAR(100),
-IPAdressPlayerID INT,
 PlayerIdentity INT,
 LastServerID INT,
-
-CONSTRAINT FK__Server_Players FOREIGN KEY (LastServerID) REFERENCES [Gaming].[Server](ServerID) ON DELETE CASCADE
 )
 
 CREATE TABLE Gaming.IPAddressPlayer
 (
-IPAdressServer INT NOT NULL IDENTITY ,
+IPAdressServerID INT NOT NULL IDENTITY ,
 PlayerID INT,
 Group8 VARBINARY(2) NULL,  --I VARBINARY(2) fields that represents the 8 groups in a ipv6. The fields 5 - 8 is nullable as they are only used for IPv6. The fields 1 - 4 is set to NOT NULL as they are be used for both IPv4 and IPv6.
 Group7 VARBINARY(2) NULL,
@@ -487,9 +525,36 @@ Group2 VARBINARY(2) NOT NULL,
 Group1 VARBINARY(2) NOT NULL,
 Network TinyINT NULL,
 
-CONSTRAINT FK__Player_IPAddressServer FOREIGN KEY (PlayerID) REFERENCES Gaming.Player(PlayerID) ON DELETE CASCADE
+CONSTRAINT FK_Player_IPAddressPlayer FOREIGN KEY (PlayerID) REFERENCES Gaming.Players(PlayerID) ON DELETE CASCADE
 ) 
+ALTER TABLE Gaming.IPAddressPlayer
+ADD CONSTRAINT [PK_IPAddressPlayer]
+PRIMARY KEY CLUSTERED
+(IPAdressServerID ASC)
+ WITH (FILLFACTOR = 100, DATA_COMPRESSION = PAGE);
 
+CREATE NONCLUSTERED INDEX [Index_IPAddressPlayer_Groups]
+  ON Gaming.IPAddressPlayer (Group1 ASC, Group2 ASC, Group3 ASC, Group4 ASC,
+         Group5 ASC, Group6 ASC, Group7 ASC, Group8 ASC, Network ASC)
+  WITH (FILLFACTOR = 100, DATA_COMPRESSION = PAGE);
+
+  ALTER TABLE Gaming.IPAddressPlayer -- Explain how it works, its really simple
+  ADD TextAddress AS (
+IIF([Group8] IS NULL,
+    -- IPv4
+    CONCAT(CONVERT(TINYINT, [Group4]), '.', CONVERT(TINYINT, [Group3]), '.',
+      CONVERT(TINYINT, [Group2]), '.', CONVERT(TINYINT, [Group1]),
+      IIF([Network] IS NOT NULL, CONCAT('/', [Network]), '')),
+    -- IPv6
+    LOWER(CONCAT(
+      CONVERT(VARCHAR(4), [Group8], 2), ':', CONVERT(VARCHAR(4), [Group7], 2), ':',
+      CONVERT(VARCHAR(4), [Group6], 2), ':', CONVERT(VARCHAR(4), [Group5], 2), ':',
+      CONVERT(VARCHAR(4), [Group4], 2), ':', CONVERT(VARCHAR(4), [Group3], 2), ':',
+      CONVERT(VARCHAR(4), [Group2], 2), ':', CONVERT(VARCHAR(4), [Group1], 2),
+      IIF([Network] IS NOT NULL, CONCAT('/', [Network]), '')
+     ))
+   ) -- end of IIF
+);
 
 CREATE TABLE Gaming.Server24
 (
@@ -503,7 +568,7 @@ PlayerKills int,
 PlayerAIKills int, --Players kille AI
 AIPlayerKills int, --AI killed Player
 
-CONSTRAINT FK__Server_Server24 FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
+CONSTRAINT FK_Server_Server24 FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
 )
 
 CREATE TABLE Gaming.UniquePlayers24
@@ -512,7 +577,7 @@ UniquePlayer24ID INT IDENTITY PRIMARY KEY,
 ServerID INT,
 PlayerID INT,
 
-CONSTRAINT FK__Server24_UniquePlayers24 FOREIGN KEY (ServerID) REFERENCES Gaming.Server24(Server24ID) ON DELETE CASCADE
+CONSTRAINT FK_Server24_UniquePlayers24 FOREIGN KEY (ServerID) REFERENCES Gaming.Server24(Server24ID) ON DELETE CASCADE
 )
 
 CREATE TABLE Gaming.ServerStats
@@ -528,157 +593,41 @@ MoneyCirculatedInShop money, -- If MoneyCirculatedInShop >= 912,337,203,685,477.
 FullMoney int not null default 0, -- Sätt till 0 så det inte ger errors
 MissionsDone int,
 
-CONSTRAINT FK__Server_ServerStats FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
+CONSTRAINT FK_Server_ServerStats FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
 )
 
 CREATE TABLE Gaming.ServerBan
 (
+ServerBanID INT IDENTITY PRIMARY KEY,
 ServerID INT,
-BanID INT IDENTITY PRIMARY KEY,
 PlayerID INT,
 Reason NVARCHAR,
 Severity INT, -- 1-10
 HowLong DATE,
 BanDate Date,
 
-CONSTRAINT FK__Server_Ban FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
+CONSTRAINT FK_Server_Ban FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
 )
 
-CREATE TABLE Forum.ForumBan
-(
-UserID INT,
-ForumBanID INT IDENTITY PRIMARY KEY,
-Reason NVARCHAR,
-Severity INT, -- 1-10
-HowLong DATE,
-BanDate Date,
-
-CONSTRAINT FK__User_ForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
-)
-
--- Slots
-
-CREATE TABLE Gaming.VestSlot
-(
-VestSID INT IDENTITY PRIMARY KEY,
-Vest_Class_Name NVARCHAR(255), -- We should make a trigger that checks inside the Clotihing table so that the Class_Name has the right type.
-
-CONSTRAINT FK__Clothing_VestSlot FOREIGN KEY (Vest_Class_Name) REFERENCES [Inventory].[Clothing$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.HeadSlot
-(
-HeadSID INT IDENTITY PRIMARY KEY,
-Headgear_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Clothing_HeadSlot FOREIGN KEY (Headgear_Class_Name) REFERENCES [Inventory].[Clothing$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.BackpackSlot
-(
-BackpackSID INT IDENTITY PRIMARY KEY,
-Backpack_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Clothing_BackpackSlot FOREIGN KEY (Backpack_Class_Name) REFERENCES [Inventory].[Clothing$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.CompassSlot
-(
-CompassSID INT IDENTITY PRIMARY KEY,
-Compass_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Items_CompassSlot FOREIGN KEY (Compass_Class_Name) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE
-) -- We could make this one different because there is only one compass (atm)
-
-CREATE TABLE Gaming.GPSSlot
-(
-GPSSID INT IDENTITY PRIMARY KEY,
-GPS_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Items_GPSsSlot FOREIGN KEY (GPS_Class_Name) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.WatchSlot
-(
-WatchSID INT IDENTITY PRIMARY KEY,
-Watch_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Items_WatchSlot FOREIGN KEY (Watch_Class_Name) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE
-) -- We could make this one different because there is only one watch (atm)
-
-CREATE TABLE Gaming.RadioSlot
-(
-RadioSID INT IDENTITY PRIMARY KEY,
-Radio_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Items_RadioSlot FOREIGN KEY (Radio_Class_Name) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE
-) -- We could make this one different because there is only one radio (atm)
-
-CREATE TABLE Gaming.MapSlot
-(
-MapSID INT IDENTITY PRIMARY KEY,
-Map_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Items_MapSlot FOREIGN KEY (Map_Class_Name) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE
-) -- Different map depending on the map that is played.
-
-CREATE TABLE Gaming.BinocularSlot
-(
-BinocularSID INT IDENTITY PRIMARY KEY,
-Binocular_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Items_BinocularSlot FOREIGN KEY (Binocular_Class_Name) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.NVGSlot
-(
-NVGSID INT IDENTITY PRIMARY KEY,
-NVG_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Items_NVGSlot FOREIGN KEY (NVG_Class_Name) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.PrimarySlot
-(
-PrimarySID INT IDENTITY PRIMARY KEY,
-Primary_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Weapons_PrimarySlot FOREIGN KEY (Primary_Class_Name) REFERENCES [Inventory].[Weapons$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.SecondarySlot
-(
-SecondarySID INT IDENTITY PRIMARY KEY,
-Secondary_Class_Name NVARCHAR(255),
-
-CONSTRAINT FK__Weapons_SecondarySlot FOREIGN KEY (Secondary_Class_Name) REFERENCES [Inventory].[Weapons$]([Class Name]) ON DELETE CASCADE
-)
-
-CREATE TABLE Gaming.LauncherSlot
-(
-LauncherSID INT IDENTITY PRIMARY KEY,
-Launcher_Class_Name NVARCHAR(255),
- 
-CONSTRAINT FK__Weapons_LauncherSlot FOREIGN KEY (Launcher_Class_Name) REFERENCES [Inventory].[Weapons$]([Class Name]) ON DELETE CASCADE
-)
-
+-- GameCharacter
 CREATE TABLE Gaming.GameCharacter
 (
 GameCharacterID INT IDENTITY PRIMARY KEY,
-UserID INT,
-BackpackSID INT,
-HeadSID INT,
-VestSID INT,
-WatchSID INT,
-CompassSID INT,
-RadioSID INT,
-MapSID INT,
-BinocularSID INT,
-NVGSID INT,
-PrimarySID INT,
-GPSSID INT,
-LauncherSID INT,
-ChatacterName NVARCHAR,
+UserID INT NOT NULL,
+BackpackSlot NVARCHAR(255),
+HeadSlot NVARCHAR(255),
+VestSlot NVARCHAR(255),
+WatchSlot NVARCHAR(255),
+CompassSlot NVARCHAR(255),
+RadioSlot NVARCHAR(255),
+MapSlot NVARCHAR(255),
+BinocularSlot NVARCHAR(255),
+NVGSlot NVARCHAR(255),
+PrimarySlot NVARCHAR(255),
+GPSSlot NVARCHAR(255),
+LauncherSlot NVARCHAR(255),
+SecondarySlot NVARCHAR(255),
+ChatacterName NVARCHAR(100),
 HP INT, 
 FoodLevel INT,
 WaterLevel INT,
@@ -687,22 +636,24 @@ y DECIMAL, --Coord
 Alive BIT,
 kills INT,
 Amount MONEY, -- Make a trigger if it gets full 
+CHECK(Amount <= MoneyFull),
 MoneyFull Money, -- Make a trigger
 Respect DECIMAL,
 
-CONSTRAINT FK__User_GameCharacter FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
-CONSTRAINT FK__BackpackSlot_GameCharacter FOREIGN KEY (BackpackSID) REFERENCES Gaming.BackpackSlot(BackpackSID),
-CONSTRAINT FK__VestSlot_GameCharacter FOREIGN KEY (VestSID) REFERENCES Gaming.VestSlot(VestSID),
-CONSTRAINT FK__HeadSlot_GameCharacter FOREIGN KEY (HeadSID) REFERENCES Gaming.HeadSlot(HeadSID),
-CONSTRAINT FK__WatchSlot_GameCharacter FOREIGN KEY (WatchSID) REFERENCES Gaming.WatchSlot(WatchSID),
-CONSTRAINT FK__CompassSlot_GameCharacter FOREIGN KEY (CompassSID) REFERENCES Gaming.CompassSlot(CompassSID),
-CONSTRAINT FK__RadioSlot_GameCharacter FOREIGN KEY (RadioSID) REFERENCES Gaming.RadioSlot(RadioSID),
-CONSTRAINT FK__MapSlot_GameCharacter FOREIGN KEY (MapSID) REFERENCES Gaming.MapSlot(MapSID),
-CONSTRAINT FK__BinocularSlot_GameCharacter FOREIGN KEY (BinocularSID) REFERENCES Gaming.BinocularSlot(BinocularSID),
-CONSTRAINT FK__NVGSlot_GameCharacter FOREIGN KEY (NVGSID) REFERENCES Gaming.NVGSlot(NVGSID),
-CONSTRAINT FK__PrimarySlot_GameCharacter FOREIGN KEY (PrimarySID) REFERENCES Gaming.PrimarySlot(PrimarySID),
-CONSTRAINT FK__GPSSlot_GameCharacter FOREIGN KEY (GPSSID) REFERENCES Gaming.GPSSlot(GPSSID),
-CONSTRAINT FK__LauncherSlot_GameCharacter FOREIGN KEY (LauncherSID) REFERENCES Gaming.LauncherSlot(LauncherSID)
+CONSTRAINT FK_User_GameCharacter FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
+CONSTRAINT FK_Clothing_GameCharacter_BackpackSlot FOREIGN KEY (BackpackSlot) REFERENCES [Inventory].[Clothing$]([Class Name]),
+CONSTRAINT FK_Clothing_GameCharacter_VestSlot FOREIGN KEY (VestSlot) REFERENCES [Inventory].[Clothing$]([Class Name]),
+CONSTRAINT FK_Clothing_GameCharacter_HeadSlot FOREIGN KEY (HeadSlot) REFERENCES [Inventory].[Clothing$]([Class Name]),
+CONSTRAINT FK_Items_GameCharacter_WatchSlot FOREIGN KEY (WatchSlot) REFERENCES [Inventory].[Items$]([Class Name]),
+CONSTRAINT FK_Items_GameCharacter_CompassSlot FOREIGN KEY (CompassSlot) REFERENCES [Inventory].[Items$]([Class Name]),
+CONSTRAINT FK_Items_GameCharacter_BinocularSlot FOREIGN KEY (BinocularSlot) REFERENCES [Inventory].[Items$]([Class Name]),
+CONSTRAINT FK_Items_GameCharacter_GPSSlot FOREIGN KEY (GPSSlot) REFERENCES [Inventory].[Items$]([Class Name]),
+CONSTRAINT FK_Items_GameCharacter_RadioSlot FOREIGN KEY (RadioSlot) REFERENCES [Inventory].[Items$]([Class Name]),
+CONSTRAINT FK_Items_GameCharacter_MapSlot FOREIGN KEY (MapSlot) REFERENCES [Inventory].[Items$]([Class Name]),
+CONSTRAINT FK_Items_GameCharacter_NVGSlot FOREIGN KEY (NVGSlot) REFERENCES [Inventory].[Items$]([Class Name]),
+CONSTRAINT FK_Weapons_GameCharacter_PrimarySlot FOREIGN KEY (PrimarySlot) REFERENCES [Inventory].[Weapons$]([Class Name]),
+CONSTRAINT FK_Weapons_GameCharacter_LauncherSlot FOREIGN KEY (LauncherSlot) REFERENCES [Inventory].[Weapons$]([Class Name]), 
+CONSTRAINT FK_Weapons_GameCharacter_SecondarySlot FOREIGN KEY (SecondarySlot) REFERENCES [Inventory].[Weapons$]([Class Name])
 )
 
 CREATE TABLE Gaming.GameStats
@@ -712,11 +663,23 @@ UserID INT,
 Kills INT,
 Deaths INT, 
 Revivals INT,
-MoneySpent Money, --Make a trigger if it gets full 
-MoneySpentFull int default 0,
-MoneyLostWhenKilled Money, --Make a trigger if it gets full 
-MoneyLostWhenKilledFull int default 0,
+MoneySpent BIGINT, 
+MoneyLostWhenKilled BIGINT, 
 
-CONSTRAINT FK__User_GameStats FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+CONSTRAINT FK_User_GameStats FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
+GO
 
+-- Run all of this inside another file later
+EXEC sp_configure 'ad hoc distributed queries', 0 --Needed to be able to get the data from the excel file
+RECONFIGURE
+GO
+EXEC sp_configure 'show advanced options', 0 --Needed to be able to get the data from the excel file
+RECONFIGURE
+GO
+
+
+EXEC master.dbo.sp_MSset_oledb_prop N'Microsoft.ACE.OLEDB.12.0', N'AllowInProcess', 0 --Needed to be able to get the data from the excel file
+GO 
+EXEC master.dbo.sp_MSset_oledb_prop N'Microsoft.ACE.OLEDB.12.0', N'DynamicParameters', 0 --Needed to be able to get the data from the excel file
+GO
