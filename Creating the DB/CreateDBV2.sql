@@ -389,7 +389,7 @@ CREATE TABLE [Site].Announcement
 (
 AnnouncementID INT IDENTITY PRIMARY KEY,
 [Message] NVARCHAR(3000),
-Kind NVARCHAR NOT NULL, 
+Kind NVARCHAR(255) NOT NULL, 
 CHECK (Kind = 'Server' OR Kind = 'Forum' OR Kind = 'HomePage' OR Kind='Important' OR Kind = 'Other')
 )
 

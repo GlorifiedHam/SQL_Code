@@ -170,13 +170,13 @@ VALUES
 (6, 10, 1, 'Disputes between staff members', 3, 0),
 (1, 2, 1, 'Admin: GlorifiedHam', 4, 0),
 (1, 2, 2, 'Moderator: SpookyOwl', 4, 0),
-(1, 10, 1, 'Change Log', 5, 0),
-(1, 10, 1, 'Change Log', 6, 0),
-(1, 10, 1, 'Change Log', 7, 0),
+--(1, 10, 1, 'Change Log', 5, 0),
+--(1, 10, 1, 'Change Log', 6, 0),
+--(1, 10, 1, 'Change Log', 7, 0),
 (1, 2, 1, 'Suggestions', 5, 0),
 (1, 2, 1, 'Suggestions', 6, 0),
 (1, 2, 1, 'Suggestions', 7, 0),
-(1, 2, 2, 'Some General tips from the staff', 8, 0),
+(1, 6, 2, 'Some General tips from the staff', 8, 0),
 (1, 2, 4, 'Sounds bugs/Problems', 8, 0),
 (1, 2, 4, 'You can actually buy tactical bacon', 9, 0),
 (1, 2, 1, 'What is your favourite Arma3 rifle?', 10, 0),
@@ -185,9 +185,7 @@ VALUES
 (1, 2, 4, 'Hi we are a group of three people that are looking to expand', 11, 0),
 (1, 2, 1, 'Is there something that are bugging you about the site?, something that you miss?. Then please post a suggestion.', 12, 0),
 (1, 2, 1, 'Darn I wished they had that, I really unlike this feature. Do you have any of these thoughts, or any suggestions please make a post.', 13, 0),
-(1, 2, 1, 'Do you have any suggestions that are not server, game or site related? Then please make a post here.', 14, 0),
-(1, 2, 1, 'Tell us your best/ worst joke',15, 0)
-
+(1, 2, 1, 'Do you have any suggestions that are not server, game or site related? Then please make a post here.', 14, 0)
 GO
 
 INSERT INTO Forum.ForumEntry
@@ -360,15 +358,67 @@ If the participants of the discussion does not comply with the warnings, dependi
 	I am super excited to be part of the team here at Greasy Fingers Gaming, and I hope to be able to contribute as much as possible. \E
 	Best Regards //Spooky 
 ', 10, 0, null, getDate()),
-(1, ''),
-(1, ''),
-(1, '')
+(1, 'Please post any suggestions for the alpha server here.', 11, 0, null, getDate()),
+(1, 'Please post any suggestions for the bravo server here', 12, 0, null, getDate()),
+(1, 'Please post any suggestions for the Zed server here', 13, 0, null, getDate()),
+(1, 'We will try to weekly post three game tips for you all in here. The first three tips are: /E
+	<ol>
+	<li>Set your object view distance to at least as far as you are going to shot, otherwice you will not see where the bullets land</li>
+	<li>Do not drive too close to your friends. Arma has an awful rubberband effect and you might be swong right into your friends vehicle and explode</li>
+	<li>There are diffrent stand, crouch and laying stances, which all can be used for different situations!</li>
+	</ol>
+	Thats it for now, thanks for reading // GHam
+	', 14, 0, null, '2017-10-16 16:00:02'),
+(2, 'If you come accross sound bugs here are some tips <br>
+	<ol>
+	<li>Turn off and on ingame effects sounds. This can be found using the  "§" button next to the "1" button in KOH servers, and inside the pad in exile servers </li>
+	<li>Shut down steam, and open it again. Check inside the process menu to see if it really did shutdown</li>
+	<li>Turn your pc off and on. It is amazing how many times this has helped</li>
+	<li>Validate the Arma 3. This can be found under "steam games", right click on Aram3 select "properties" after that click on verify game integrity </li>
+	<li>Update your graphic cards drivers</li>
+	</ol><br>
+	Thats it for the tips for the sound bugs, hope it helped. If you have any other suggestions please share it with us. <br>
+	Best regards //GHam
+	', 15, 0, null, getDate()),
+(1,'Please share your experience with the wonderful plentitude of Arma3 mods. <br>
+	Some of my favourite Arma 3 mods as you should have guessed are: <br>
+	Exile: I love the grinding, leveling, economy and the all around feeling <br>
+	KOH: Who does not love too shoot and blow stuff up. <br>
+	Best Regards //Gham
+	',16, 0, null, getDate()),
+(1,'Do you want someone to hold your hand, someone to tuck you in when the grenades are landing? <br>
+	Well look no further! In our teamspeak you can find other people, groups & clans looking to recruit. <br>
+	Join our teamspeak today! Address: GreasyFingersGaming.gfg <br>
+	You can also leave a post here with your infromation, for people to find <br>
+	If you are a clan or a group of people looking to recruit, please create a new recruitng thread. <br>
+	Good hunting //GHam
+	',17, 0, null, getDate()),
+(5,'As the topic suggests we are a group of three that are looking for new members. We welcome everyone, but we would prefer if you are at least 18 years old. <br>
+	This is because we have no filter when we game, therefore our environment becomes toxic and not child friendly <br>
+	You can find us at Greasy Fingers Gamings ts: GreasyFingersGaming.gfg or leave a post here with your contact information and we will find you. <br>
+	Happy gaming //RedT
+	',18, 0, null, getDate()),
+(1,'If you have any suggestions, or problem with any features of this site please leave a post here. <br>
+	I read every suggestion post and will always try to implement as many of your suggestions as possible.  <br>
+	Best Regards//GHam
+	',19, 0, null, getDate()),
+(1,'If you have any suggestions, or problem with any features of the Forum please leave a post here. <br>
+	I read every suggestion post and will always try to implement as many of your suggestions as possible. <br>
+	Best Regards//GHam
+	',20, 0, null, getDate()),
+(1,'If you have any suggestions, or problem with any thing that is not forum, server or site related, please leave a post here. <br>
+	You might have an awesome event idea, community idea or some other crazy idea. <br>
+	Just a reminder: keep it friendly. <br>
+	I read every suggestion post and will always try to implement as many of your suggestions as possible. <br>
+	Best Regards//GHam
+	',21, 0, null, getDate())
 GO
+
 
 INSERT INTO [Site].Announcement
 ([Message], Kind)
 VALUES
-('Thre will be a Webpage maintenance 2017-20-20', 'HomePage')
+('There will be a Webpage maintenance 2017-12-20', 'HomePage')
 GO
 
 INSERT INTO [Site].News
