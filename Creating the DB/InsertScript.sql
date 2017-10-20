@@ -1,5 +1,5 @@
-﻿-- Insert scripUSE ForumDB
-USE ForumDB
+﻿-- Insert scripUSE GamingSiteDB
+USE GamingSiteDB
 GO
 
 -- Insert into Role
@@ -9,20 +9,20 @@ Values
 GO
 -- Insert into user
 Insert into [Site].[User]
-([Username], [Firstname], [Lastname], [Age], [Password], [Email], [Amount of entries], [Phonenumber], [RegDATE], [RoleID])
+([Username], [Firstname],ShowFirstName, [Lastname], ShowLastName, [Age], ShowAge, [Password], [Email], ShowEmail, [Amount of entries], [RegDATE], [RoleID])
 Values
-('GlorifiedHam','Alexander','Jansson','1994-04-04', 'War2Glory', 'Alexanderjan94@gmail.com',0,0704335884, '2017-07-20', 13),
-('SpookyOwl','Jimmy','Palmberg','1993-09-05','WowIsBest213', 'Jimmy@gmail.com',0,0765437869, '2017-07-31', 12),
-('Wardawg','Tom','karlsson','1967-06-19', 'qwerty123', 'Tom@live.se',0,0705467781, default, 2),
-('SilverStorm','Amanda','Ekström','1996-03-22', 'qwerty123', 'Amanda@live.se',0,2515469442, default, 5),
-('LongTime','Sara','Hewitt','1990-11-12', 'qwerty123', 'Sara@gmail.com',0,9495694371, default, 3),
-('Qwerty90','Anders','Pinnelli','1992-10-04', 'qwerty123', 'Anders@hotmail.com',0,6719251352, default, 4),
-('BroMan','Erik','Pinnelli','1985-07-23', 'qwerty123', 'Erik@hotmail.se',0,2269062721, default, 2),
-('DropKick','Klara','Woodlow','1991-06-25', 'asdfghjkl123', 'Saralee@hotmail.com',0,0736127743, default, 2),
-('Loop96','Doris','cicelot','1996-08-01', 'Yellowflag3', 'Klarkie@gmail.com',0,0709651126, default, 3),
-('WoopWoop11','Johanna','wromba', '1989-03-18','UtopiaLamb', 'JohannaW93@hotmail.com',0,0765431176, default,2),
-('BadUser1', 'Tolvin', 'Blovich', '1992-05-17', 'LoveMyPW2', 'Tolvin@gmail.com',0,076453123, default,2),
-('BadUser2', 'Matilda', 'Passito', '1991-01-23', 'PWPWPWPW1', 'Matilda@gmail.com',0,073423473, default,2)
+('GlorifiedHam','Alexander', 1, 'Jansson', 1, '1994-04-04', 1, 'War2Glory', 'Alexanderjan94@gmail.com',1 , 0, '2017-07-20', 13),
+('SpookyOwl','Jimmy', 1, 'Palmberg', 1, '1993-09-05', 1, 'WowIsBest213', 'Jimmy@gmail.com', 1, 0, '2017-07-31', 12),
+('Wardawg','Tom', 1,'karlsson', DEFAULT,'1967-06-19', 1,'qwerty123', 'Tom@live.se',1 ,0, default, 2),
+('SilverStorm','Amanda', 1,'Ekström', DEFAULT,'1996-03-22', 1, 'qwerty123', 'Amanda@live.se', 1,0, default, 5),
+('LongTime','Sara', 1,'Hewitt', 0, '1990-11-12', 1, 'qwerty123', 'Sara@gmail.com', 1, 0, default, 3),
+('Qwerty90','Anders', 1,'Pinnelli', 0,'1992-10-04', 1,'qwerty123', 'Anders@hotmail.com', 1, 0, default, 4),
+('BroMan','Erik', 1,'Pinnelli', 1,'1985-07-23', 0,'qwerty123', 'Erik@hotmail.se', 1, 0, default, 2),
+('DropKick','Klara', 1,'Woodlow', 0,'1991-06-25', 1,'asdfghjkl123', 'Saralee@hotmail.com', 0, 0, default, 2),
+('Loop96','Doris', 1,'cicelot', 1, '1996-08-01', 0, 'Yellowflag3', 'Klarkie@gmail.com',1 , 0, default, 3),
+('WoopWoop11','Johanna', 0,'wromba', 1,'1989-03-18', 1,'UtopiaLamb', 'JohannaW93@hotmail.com', 0, 0, default,2),
+('BadUser1', 'Tolvin', 0, 'Blovich', 0,'1992-05-17', 1,'LoveMyPW2', 'Tolvin@gmail.com',1, 0, default,2),
+('BadUser2', 'Matilda', 0, 'Passito', 0,'1991-01-23', 1, 'PWPWPWPW1', 'Matilda@gmail.com',1 ,0, default,2)
 GO
 
 -- Insert banned users
@@ -40,7 +40,9 @@ VALUES
 (127, 0, 0, 0, 4, 22, 222, 54, NULL, 1), -- IPv6
 (28, 11, 1675, 0, 45673, 201, 2, 7363, 33, 2), -- IPv6
 (NULL, NULL, NULL, NULL, 82, 144, 3, 53, NULL, 3), -- v4
-(NULL, NULL, NULL, NULL, 196, 154, 234, 11, 24, 4) -- v4)
+(NULL, NULL, NULL, NULL, 196, 154, 234, 11, 24, 4), -- v4)
+(NULL, NULL, NULL, NULL, 194, 111, 243, 13, 88, 11),
+(127, 12, 111, 0, 44, 333, 123, 23, NULL, 12)
 GO
 
 -- INSERT User Pictures 
@@ -60,24 +62,24 @@ VALUES
 (11, Default, 'DefaultAvatar', DEFAULT),
 (12, Default, 'DefaultAvatar', DEFAULT)
 
-Declare @picture1 varbinary(MAX) = (Select * FROM Openrowset(Bulk N'D:/Programming/SQL/ForumDB/Images/Games.jpg',SINGLE_BLOB ) AS SRC) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
+Declare @picture1 varbinary(MAX) = (Select * FROM Openrowset(Bulk N'D:/Programming/SQL/GamingSiteDB/Images/Games.jpg',SINGLE_BLOB ) AS SRC) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
 INSERT INTO Internal.Picture
 (UserID, Picture, [Name], DateAdded)
 VALUES  (1, @picture1, 'GamingAvatar', DEFAULT)
 
 --'Hi I am the one that made this site :)'
 
-Declare @picture2 varbinary(MAX) = (Select * FROM Openrowset(Bulk N'D:/Programming/SQL/ForumDB/Images/Games.jpg',SINGLE_BLOB ) AS Controller) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
+Declare @picture2 varbinary(MAX) = (Select * FROM Openrowset(Bulk N'D:/Programming/SQL/GamingSiteDB/Images/Games.jpg',SINGLE_BLOB ) AS Controller) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
 INSERT INTO Internal.Picture
 (UserID, Picture, [Name], DateAdded)
 VALUES  (1, @picture2, 'GamingController',DEFAULT)
 
-Declare @picture3 varbinary(MAX) = (Select * FROM Openrowset(Bulk'D:/Programming/SQL/ForumDB/Images/ChessKing.jpeg',SINGLE_BLOB ) AS King) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
+Declare @picture3 varbinary(MAX) = (Select * FROM Openrowset(Bulk'D:/Programming/SQL/GamingSiteDB/Images/ChessKing.jpeg',SINGLE_BLOB ) AS King) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
 INSERT INTO Internal.Picture
 (UserID, Picture, [Name], DateAdded)
 values (2, @picture3,'King',DEFAULT)
 
-Declare @picture4 varbinary(MAX) = (Select * FROM Openrowset(Bulk'D:/Programming/SQL/ForumDB/Images/Code.jpg',SINGLE_BLOB ) AS Code) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
+Declare @picture4 varbinary(MAX) = (Select * FROM Openrowset(Bulk'D:/Programming/SQL/GamingSiteDB/Images/Code.jpg',SINGLE_BLOB ) AS Code) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image .
 INSERT INTO Internal.Picture
 (UserID, Picture, [Name], DateAdded)
 values (3, @picture4,'Code', DEFAULT)
@@ -414,6 +416,12 @@ If the participants of the discussion does not comply with the warnings, dependi
 	',21, 0, null, getDate())
 GO
 
+INSERT INTO Forum.AccountForumBan
+(UserID, BannersID, Reason, DisplayReason, Severity, HowLong, BanDate)
+VALUES
+(9, 1,'Created way to many new subcategories','We sent you several warnings not to create any more subcategories, unless there was a need for them', 10, Cast('2017-11-01' AS DATETIME), getDate()),
+(12, 2, 'Harassment','Harassment', 3, CAST('2017-11-15' AS DATETIME), getDate())
+
 
 INSERT INTO [Site].Announcement
 ([Message], Kind)
@@ -424,16 +432,41 @@ GO
 INSERT INTO [Site].News
 (UserID, [Text], DatePosted, Likes, clicks)
 VALUES
-(1),
+(1, '<h1>Finally our website is live, and ready to go</h2> <br>
+<p>The team here at Greasy fingers gaming is happy to announce the launch of ur new website. Itn has been quiet on our part for a long time <br>
+when it comes to this site. We apologize for that, but we were working fulltime on the gaming server. Please note that the webpage is still in an early aplha stage, so all
+features might not work correctly, and there will be a lot more features added in the future. We would be greatfull if you would make a post about any problems, bugs and features you might want added, <br>
+but please read the forum rules before posting. </p>  <br> <br>
 
+<h3>Features implemented that should be working correctly:</h3>
+<ul>
+<li> The forum. </li>
+<li> User profiles. </li>
+<li> Messages. </li>
+</ul>
+<br><br>
+
+<h3>Features that will be added in the feature</h3>
+<ul>
+<li> We will add game server information and statistics.</li>
+<li> Game character information, such as level, state, and so on.</li>
+<li> New message design. </li>
+<li> New forum design.</li>
+</ul>
+
+<br><br>
+//GHam
+', getDate(), 0, 0)
+
+DECLARE @NewsPic varbinary(MAX) = (Select * FROM Openrowset(Bulk N'D:/Programming/SQL/GamingSiteDB/Images/KeyBoard.jpg',SINGLE_BLOB ) AS KeyBoardPic) --OPENROWSET supports bulk operations through a built-in BULK provider that enables data from a file to be read and returned as a rowset, we use this to retrivem the image.
 
 INSERT INTO [Site].NewsPrictures
 (Picture, NewsID)
 VALUES
-(),
-()
+(@NewsPic, 1)
 
-INSERT INTO [Site].Guide
+
+/* INSERT INTO [Site].Guide
 (UserID, [Text], DatePosted, Likes, clicks)
 VALUES
 (1),
@@ -444,7 +477,8 @@ INSERT INTO [Site].GuidePrictures
 VALUES
 (),
 ()
-
+*/
+/*
 INSERT INTO Gaming.[Server]
 ([Name], [Online], LastCHECK, MaxPlayers, NumberOfPlayers, UniquePlayers, HeadMod, Map, Mods, LastServerReset, Resets, Bans, MoneyCirculatedInShop, MissionsDone, PlayerKills, PlayerAIKills, AIPlayerKills )
 VALUES
@@ -459,14 +493,6 @@ INSERT INTO Gaming.[IPAddressServer]
 VALUES
 (),
 ()
-
---Insert Into account forum ban
-
-INSERT INTO Forum.AccountForumBan
-(UserID, BannersID, Reason, DisplayReason, Severity, HowLong, BanDate)
-VALUES
-(9, 1,'Created way to many new subcategories','We sent you several warnings not to create any more subcategories, unless there was a need for them', 10, Cast('2017-11-01' AS DATETIME), getDate()),
-(12, 2, 'Harassment','Harassment', 3, CAST('2017-11-15' AS DATETIME), getDate())
 
 INSERT INTO Gaming.Players
 ([Name], PlayerIdentity, LastServerID)
@@ -521,3 +547,4 @@ INSERT INTO Gaming.GameStats
 VALUES
 (),
 ()
+*/

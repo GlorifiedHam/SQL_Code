@@ -1,14 +1,14 @@
-use master;		
+	use master;		
 go
 
-if db_id('ForumDB') is NOT NULL
-	drop database ForumDB
+if db_id('GamingSiteDB') is NOT NULL
+	drop database GamingSiteDB
 go
 
-CREATE database ForumDB
+CREATE database GamingSiteDB
 go
 
-use ForumDB
+use GamingSiteDB
 go
 
 CREATE FUNCTION [dbo].[GetBlobData]()
@@ -20,11 +20,11 @@ BEGIN
     -- Set minimum binary representation HexaDECIMAL number as DEFAULT
     SET @BinaryData =(0x) 
     -- First CHECK if the file exists on the directory 
-    EXEC Master.dbo.xp_fileexist N'D:/Programming/SQL/ForumDB/Images/Game.PNG', @IFFileExists OUT 
+    EXEC Master.dbo.xp_fileexist N'D:/Programming/SQL/GamingSiteDB/Images/Game.PNG', @IFFileExists OUT 
     IF @IFFileExists = 1
     
         -- If exists then read the file content
-        SET @BinaryData = (SELECT * FROM OPENROWSET(BULK N'D:/Programming/SQL/ForumDB/Images/Game.PNG',SINGLE_BLOB)
+        SET @BinaryData = (SELECT * FROM OPENROWSET(BULK N'D:/Programming/SQL/GamingSiteDB/Images/Game.PNG',SINGLE_BLOB)
 	AS BLOBData)
 
     RETURN @BinaryData
@@ -88,90 +88,218 @@ GO
 
 SELECT * INTO Inventory.[Weapons$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Weapons$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Weapons$]
 Go
 SELECT * INTO Inventory.[Explosives$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Explosives$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Explosives$]
 Go
 SELECT * INTO Inventory.[Misc$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Misc$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Misc$]
 Go
 SELECT * INTO Inventory.[Ammunition$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Ammunition$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Ammunition$]
 Go
 SELECT * INTO Inventory.[Items$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Items$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Items$]
 Go
 SELECT * INTO Inventory.[Clothing$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Clothing$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Clothing$]
 Go
 SELECT * INTO Inventory.[Vehicles$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Vehicles$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Vehicles$]
 Go
 SELECT * INTO Inventory.[Crafting$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Crafting$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Crafting$]
 Go
 SELECT * INTO Inventory.[Attachments$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Attachments$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Attachments$]
 Go
 SELECT * INTO Inventory.[Medical$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Medical$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Medical$]
 Go
 SELECT * INTO Inventory.[Food$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Food$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Food$]
 Go
 SELECT * INTO Inventory.[Drinkables$]
 FROM OPENDATASOURCE('Microsoft.ACE.OLEDB.12.0',
-'Data Source=D:\Programming\SQL\ForumDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Drinkables$]
+'Data Source=D:\Programming\SQL\GamingSiteDB\Excel\Shop_Inv_V3.xlsx;Extended Properties=Excel 12.0')...[Drinkables$]
 Go
 
+IF((SELECT COUNT(*) FROM Inventory.[Weapons$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Weapons$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Weapons$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Weapons$]
+ADD PRIMARY KEY ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Explosives$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Explosives$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Explosives$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Explosives$]
+ADD PRIMARY KEY  ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[MISC$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[MISC$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[MISC$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[MISC$]
+ADD PRIMARY KEY  ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Ammunition$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Ammunition$] WHERE [Class Name] IS null
+END
 ALTER TABLE Inventory.[Ammunition$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Ammunition$]
+ADD PRIMARY KEY ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Items$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Items$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Items$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Items$]
+ADD PRIMARY KEY ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Clothing$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Clothing$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Clothing$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Clothing$]
+ADD PRIMARY KEY ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Vehicles$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Vehicles$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Vehicles$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Vehicles$]
+ADD PRIMARY KEY ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Crafting$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Crafting$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Crafting$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Crafting$]
+ADD PRIMARY KEY ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Attachments$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Attachments$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Attachments$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Attachments$]
+ADD PRIMARY KEY ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Medical$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Medical$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Medical$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Medical$]
+ADD PRIMARY KEY  ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Food$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Food$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Food$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Food$]
+ADD PRIMARY KEY  ([Class Name])
 
+IF((SELECT COUNT(*) FROM Inventory.[Drinkables$] WHERE [Class Name] is null) > 0)
+BEGIN
+DELETE FROM Inventory.[Drinkables$] WHERE [Class Name] IS null
+END 
 ALTER TABLE Inventory.[Drinkables$]
-ADD UNIQUE ([Class Name])
+ALTER COLUMN [Class Name] NVARCHAR(255) NOT NULL
+GO
+ALTER TABLE Inventory.[Drinkables$]
+ADD PRIMARY KEY  ([Class Name])
 
 /*Regular create statements from this point on*/
+
+CREATE TABLE [Site].[GuestIP]
+(
+GuestIPID INT NOT NULL IDENTITY,
+GuestID INT UNIQUE,
+Group8 VARBINARY(2) NULL,  --I VARBINARY(2) fields that represents the 8 groups in a ipv6. The fields 5 - 8 is nullable as they are only used for IPv6. The fields 1 - 4 is set to NOT NULL as they are be used for both IPv4 and IPv6.
+Group7 VARBINARY(2) NULL,
+Group6 VARBINARY(2) NULL,
+Group5 VARBINARY(2) NULL,
+Group4 VARBINARY(2) NOT null,
+Group3 VARBINARY(2) NOT null,
+Group2 VARBINARY(2) NOT null,
+Group1 VARBINARY(2) NOT null,
+Network TINYINT null,
+)
+ALTER TABLE [Site].[GuestIP]
+ADD CONSTRAINT [PK_GuestIP]
+PRIMARY KEY CLUSTERED
+(GuestIPID ASC)
+ WITH (FILLFACTOR = 100, DATA_COMPRESSION = PAGE);
+
+CREATE NONCLUSTERED INDEX [Index_GuestIP_Groups]
+  ON [Site].[GuestIP] (Group1 ASC, Group2 ASC, Group3 ASC, Group4 ASC,
+         Group5 ASC, Group6 ASC, Group7 ASC, Group8 ASC, Network ASC)
+  WITH (FILLFACTOR = 100, DATA_COMPRESSION = PAGE);
+
+  ALTER TABLE [Site].[GuestIP] 
+  ADD TextAddress AS (
+IIF([Group8] IS NULL,
+    -- IPv4
+    CONCAT(CONVERT(TINYINT, [Group4]), '.', CONVERT(TINYINT, [Group3]), '.',
+      CONVERT(TINYINT, [Group2]), '.', CONVERT(TINYINT, [Group1]),
+      IIF([Network] IS NOT NULL, CONCAT('/', [Network]), '')),
+    -- IPv6
+    LOWER(CONCAT(
+      CONVERT(VARCHAR(4), [Group8], 2), ':', CONVERT(VARCHAR(4), [Group7], 2), ':',
+      CONVERT(VARCHAR(4), [Group6], 2), ':', CONVERT(VARCHAR(4), [Group5], 2), ':',
+      CONVERT(VARCHAR(4), [Group4], 2), ':', CONVERT(VARCHAR(4), [Group3], 2), ':',
+      CONVERT(VARCHAR(4), [Group2], 2), ':', CONVERT(VARCHAR(4), [Group1], 2),
+      IIF([Network] IS NOT NULL, CONCAT('/', [Network]), '')
+     ))
+   ) -- end of IIF
+);
+
 
 CREATE TABLE Internal.[Role]( -- Only admin should be able to make changes to this table
 RoleID INT IDENTITY PRIMARY KEY,
@@ -183,12 +311,16 @@ CREATE TABLE [Site].[User](
 UserID INT IDENTITY PRIMARY KEY,
 Username NVARCHAR(100) NOT NULL UNIQUE,
 Firstname NVARCHAR(1000) NOT NULL,
+ShowFirstName BIT NOT NULL DEFAULT 0,
 Lastname NVARCHAR(1000) NOT NULL,
+ShowLastName BIT NOT NULL DEFAULT 0,
 Age DATE NOT NULL,
+ShowAge BIT  DEFAULT 0,
 [Password] NVARCHAR(100), --Changes to pw_encrypted 
 Email NVARCHAR(300) NOT NULL UNIQUE,
+ShowEmail BIT NOT NULL DEFAULT 0,
 [Amount of entries] INT DEFAULT 0, --Trigger on creating an entry
-Phonenumber VARCHAR(22), 
+-- Phonenumber VARCHAR(22), 
 RegDATE DATE DEFAULT GETDATE(),
 RoleID int DEFAULT 2,
 
@@ -286,6 +418,7 @@ ReciverID INT,
 title NVARCHAR(200) NOT NULL,
 DateSent DateTime,
 [read] BIT DEFAULT 0,  
+Flag BIT DEFAULT 0,
 
 CONSTRAINT FK_User_MessageSender FOREIGN KEY (SenderID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
 CONSTRAINT FK_User_UsernameReciver FOREIGN KEY (ReciverID) REFERENCES [Site].[User](UserID)
@@ -335,7 +468,7 @@ CONSTRAINT FK_Roles_Thread_Write FOREIGN KEY ([Write]) REFERENCES Internal.[Role
 
 CREATE TABLE Forum.ThreadLock
 (
-ThreadLockID INT,
+ThreadLockID INT IDENTITY PRIMARY KEY,
 ThreadID INT,
 Reason NVARCHAR(1000),
 DisplayReason NVARCHAR(1000),

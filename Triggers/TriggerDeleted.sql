@@ -1,6 +1,6 @@
 -- Trigger deleteUser
 
-USE ForumDB
+USE GamingSiteDB
 go
 
 CREATE TRIGGER deleteUser

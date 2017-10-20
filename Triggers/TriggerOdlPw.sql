@@ -1,6 +1,6 @@
 -- Trigger oldPassWord
 
-USE ForumDB
+USE GamingSiteDB
 go
 
 CREATE TRIGGER oldPassword

@@ -1,4 +1,4 @@
-USE ForumDb Internal.[Profile]
+USE GamingSiteDB Internal.[Profile]
 GO
 
 CREATE TRIGGER AddUserDefaultAvatarPicture

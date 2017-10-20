@@ -1,5 +1,5 @@
 --Role Procs & Functions, need to add try catch
-Use ForumDB
+Use GamingSiteDB
 GO
 
 /*Returns the RolenName of a user*/
@@ -70,15 +70,15 @@ END CATCH
 
 GO
 
-/* How to call it 
+-- How to call it 
 -- Will return There is no role with the name of: ...
-DECLARE @Mess nvarchar(255)
-EXEC ChangeRole 6, '7', @Message = @Mess Output
-Print @Mess
+DECLARE @Mess1 nvarchar(255)
+EXEC ChangeRole 6, '7', @Message = @Mess1 Output
+Print @Mess1
 
 -- Working
-DECLARE @Mess nvarchar(255)
-EXEC ChangeRole 6, 'Member', @Message = @Mess Output
-Print @Mess
+DECLARE @Mess2 nvarchar(255)
+EXEC ChangeRole 6, 'Member', @Message = @Mess2 Output
+Print @Mess2
 
-*/
+

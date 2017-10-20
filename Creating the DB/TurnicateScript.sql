@@ -1,64 +1,65 @@
 -- Turnicate Scripttruncate table
-USE ForumDB
+USE GamingSiteDB
 GO
 
 -- Tar bort alla främmande nycklar för att kunna göra en turnacte (återställa identity kolumnerna till 1)
 
-ALTER TABLE [ForumDb].Internal.AccountBan DROP CONSTRAINT FK_User_AccountBan
-ALTER TABLE [ForumDb].Forum.ThreadLock DROP CONSTRAINT FK_User_ThreadLock
-ALTER TABLE [ForumDb].Forum.ThreadLock DROP CONSTRAINT FK_Thread_ThreadLock
-ALTER TABLE [ForumDb].Internal.Picture DROP CONSTRAINT FK_User_Picture 
-ALTER TABLE [ForumDb].Forum.AccountForumBan DROP CONSTRAINT FK_User_AccountForumBan
-ALTER TABLE [ForumDb].[Site].[IPAddress] DROP CONSTRAINT FK_User_IPAddress
-ALTER TABLE [ForumDb].Internal.[Profile] DROP CONSTRAINT FK_User_Profile
-ALTER TABLE [ForumDb].Internal.[Profile] DROP CONSTRAINT FK_Picture_Profile
-ALTER TABLE [ForumDb].Internal.Picture DROP CONSTRAINT UQ_UserID_Name
-ALTER TABLE [ForumDB].[Site].MessageSend DROP CONSTRAINT FK_User_MessageSender
-ALTER TABLE [ForumDB].[Site].MessageSend DROP CONSTRAINT FK_User_UsernameReciver
-ALTER TABLE [ForumDB].Forum.GlobalCategory DROP CONSTRAINT FK_User_GlobalCategory
-ALTER TABLE [ForumDB].Forum.GlobalCategory DROP CONSTRAINT FK_Roles_GlobalCategory
-ALTER TABLE [ForumDB].Forum.SubCategory DROP CONSTRAINT FK_User_SubCategory
-ALTER TABLE [ForumDB].Forum.SubCategory DROP CONSTRAINT FK_GlobalCategoryID_SubCategory
-ALTER TABLE [ForumDB].Forum.SubCategory DROP CONSTRAINT FK_Roles_SubCategory_Read
-ALTER TABLE [ForumDB].Forum.SubCategory DROP CONSTRAINT FK_Roles_SubCategory_Write
-ALTER TABLE [ForumDB].Forum.Thread DROP CONSTRAINT FK_User_Thread
-ALTER TABLE [ForumDB].Forum.Thread DROP CONSTRAINT FK_SubCategory_Thread
-ALTER TABLE [ForumDB].Forum.Thread DROP CONSTRAINT FK_Roles_Thread_Read
-ALTER TABLE [ForumDB].Forum.Thread DROP CONSTRAINT FK_Roles_Thread_Write
-ALTER TABLE [ForumDB].Forum.ForumEntry DROP CONSTRAINT FK_User_ForumEntry
-ALTER TABLE [ForumDB].Forum.ForumEntry DROP CONSTRAINT FK_Thread_ForumEntry
-ALTER TABLE [ForumDB].[Site].News DROP CONSTRAINT FK_User_News
-ALTER TABLE [ForumDB].[Site].NewsPrictures DROP CONSTRAINT FK_News_NewsPrictures
-ALTER TABLE [ForumDB].[Site].Guide DROP CONSTRAINT FK_User_Guide
-ALTER TABLE [ForumDB].[Site].GuidePrictures DROP CONSTRAINT FK_Guide_GuidePrictures
-ALTER TABLE [ForumDB].Gaming.IPAddressPlayer DROP CONSTRAINT FK_Player_IPAddressPlayer
-ALTER TABLE [ForumDB].Gaming.[IPAddressServer] DROP CONSTRAINT FK_Server_IPAddress
-ALTER TABLE [ForumDB].Gaming.Server24 DROP CONSTRAINT FK_Server_Server24
-ALTER TABLE [ForumDB].Gaming.UniquePlayers24 DROP CONSTRAINT FK_Server24_UniquePlayers24
-ALTER TABLE [ForumDB].Gaming.ServerStats DROP CONSTRAINT FK_Server_ServerStats
-ALTER TABLE [ForumDB].Gaming.ServerBan DROP CONSTRAINT FK_Server_Ban
-ALTER TABLE [ForumDB].Forum.ForumBan DROP CONSTRAINT FK_User_ForumBan
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_User_GameCharacter
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Clothing_GameCharacter_BackpackSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Clothing_GameCharacter_VestSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Clothing_GameCharacter_HeadSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_WatchSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_CompassSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_RadioSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_MapSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_BinocularSlot 
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_NVGSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_GPSSlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Weapons_GameCharacter_PrimarySlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Weapons_GameCharacter_SecondarySlot
-ALTER TABLE [ForumDB].Gaming.GameCharacter DROP CONSTRAINT FK_Weapons_GameCharacter_LauncherSlot
-ALTER TABLE [ForumDB].Gaming.GameStats DROP CONSTRAINT FK_User_GameStats
-ALTER TABLE [ForumDb].[Site].[User] DROP CONSTRAINT FK_Role_User
+ALTER TABLE [GamingSiteDB].Internal.AccountBan DROP CONSTRAINT FK_User_AccountBan
+ALTER TABLE [GamingSiteDB].Forum.ThreadLock DROP CONSTRAINT FK_User_ThreadLock
+ALTER TABLE [GamingSiteDB].Forum.ThreadLock DROP CONSTRAINT FK_Thread_ThreadLock
+ALTER TABLE [GamingSiteDB].Internal.Picture DROP CONSTRAINT FK_User_Picture 
+ALTER TABLE [GamingSiteDB].Forum.AccountForumBan DROP CONSTRAINT FK_User_AccountForumBan
+ALTER TABLE [GamingSiteDB].[Site].[IPAddress] DROP CONSTRAINT FK_User_IPAddress
+ALTER TABLE [GamingSiteDB].Internal.[Profile] DROP CONSTRAINT FK_User_Profile
+ALTER TABLE [GamingSiteDB].Internal.[Profile] DROP CONSTRAINT FK_Picture_Profile
+ALTER TABLE [GamingSiteDB].Internal.Picture DROP CONSTRAINT UQ_UserID_Name
+ALTER TABLE [GamingSiteDB].[Site].MessageSend DROP CONSTRAINT FK_User_MessageSender
+ALTER TABLE [GamingSiteDB].[Site].MessageSend DROP CONSTRAINT FK_User_UsernameReciver
+ALTER TABLE [GamingSiteDB].Forum.GlobalCategory DROP CONSTRAINT FK_User_GlobalCategory
+ALTER TABLE [GamingSiteDB].Forum.GlobalCategory DROP CONSTRAINT FK_Roles_GlobalCategory
+ALTER TABLE [GamingSiteDB].Forum.SubCategory DROP CONSTRAINT FK_User_SubCategory
+ALTER TABLE [GamingSiteDB].Forum.SubCategory DROP CONSTRAINT FK_GlobalCategoryID_SubCategory
+ALTER TABLE [GamingSiteDB].Forum.SubCategory DROP CONSTRAINT FK_Roles_SubCategory_Read
+ALTER TABLE [GamingSiteDB].Forum.SubCategory DROP CONSTRAINT FK_Roles_SubCategory_Write
+ALTER TABLE [GamingSiteDB].Forum.Thread DROP CONSTRAINT FK_User_Thread
+ALTER TABLE [GamingSiteDB].Forum.Thread DROP CONSTRAINT FK_SubCategory_Thread
+ALTER TABLE [GamingSiteDB].Forum.Thread DROP CONSTRAINT FK_Roles_Thread_Read
+ALTER TABLE [GamingSiteDB].Forum.Thread DROP CONSTRAINT FK_Roles_Thread_Write
+ALTER TABLE [GamingSiteDB].Forum.ForumEntry DROP CONSTRAINT FK_User_ForumEntry
+ALTER TABLE [GamingSiteDB].Forum.ForumEntry DROP CONSTRAINT FK_Thread_ForumEntry
+ALTER TABLE [GamingSiteDB].[Site].News DROP CONSTRAINT FK_User_News
+ALTER TABLE [GamingSiteDB].[Site].NewsPrictures DROP CONSTRAINT FK_News_NewsPrictures
+ALTER TABLE [GamingSiteDB].[Site].Guide DROP CONSTRAINT FK_User_Guide
+ALTER TABLE [GamingSiteDB].[Site].GuidePrictures DROP CONSTRAINT FK_Guide_GuidePrictures
+ALTER TABLE [GamingSiteDB].Gaming.IPAddressPlayer DROP CONSTRAINT FK_Player_IPAddressPlayer
+ALTER TABLE [GamingSiteDB].Gaming.[IPAddressServer] DROP CONSTRAINT FK_Server_IPAddress
+ALTER TABLE [GamingSiteDB].Gaming.Server24 DROP CONSTRAINT FK_Server_Server24
+ALTER TABLE [GamingSiteDB].Gaming.UniquePlayers24 DROP CONSTRAINT FK_Server24_UniquePlayers24
+ALTER TABLE [GamingSiteDB].Gaming.ServerStats DROP CONSTRAINT FK_Server_ServerStats
+ALTER TABLE [GamingSiteDB].Gaming.ServerBan DROP CONSTRAINT FK_Server_Ban
+ALTER TABLE [GamingSiteDB].Forum.ForumBan DROP CONSTRAINT FK_User_ForumBan
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_User_GameCharacter
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Clothing_GameCharacter_BackpackSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Clothing_GameCharacter_VestSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Clothing_GameCharacter_HeadSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_WatchSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_CompassSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_RadioSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_MapSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_BinocularSlot 
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_NVGSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Items_GameCharacter_GPSSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Weapons_GameCharacter_PrimarySlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Weapons_GameCharacter_SecondarySlot
+ALTER TABLE [GamingSiteDB].Gaming.GameCharacter DROP CONSTRAINT FK_Weapons_GameCharacter_LauncherSlot
+ALTER TABLE [GamingSiteDB].Gaming.GameStats DROP CONSTRAINT FK_User_GameStats
+ALTER TABLE [GamingSiteDB].[Site].[User] DROP CONSTRAINT FK_Role_User
 GO
 
 --Tar bort ev data som redan finns i tabellerna, snabbare än delete och återsäller identitykolumnerna till 1. Delete fungerar dock bra om det inte finns mycket data i databasen
 
 truncate table Internal.[Role];
+truncate table [Site].[GuestIP]
 truncate table Forum.ThreadLock;
 truncate table Forum.AccountForumBan;
 truncate table [Site].[User];
@@ -101,7 +102,7 @@ ALTER TABLE Forum.ThreadLock
 ADD CONSTRAINT FK_Thread_ThreadLock FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(ThreadID)
 
 ALTER TABLE [Site].[IPAddress]
-ADD CONSTRAINT FK_User_IPAdress FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+ADD CONSTRAINT FK_User_IPAddress FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 
 ALTER TABLE Internal.AccountBan
 ADD CONSTRAINT FK_User_AccountBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
@@ -203,6 +204,9 @@ ALTER TABLE Gaming.GameCharacter
 ADD CONSTRAINT FK_Clothing_GameCharacter_BackpackSlot FOREIGN KEY (BackpackSlot) REFERENCES [Inventory].[Clothing$]([Class Name])
 
 ALTER TABLE Gaming.GameCharacter
+ADD CONSTRAINT FK_Clothing_GameCharacter_VestSlot FOREIGN KEY (VestSlot) REFERENCES [Inventory].[Clothing$]([Class Name])
+
+ALTER TABLE Gaming.GameCharacter
 ADD CONSTRAINT FK_Clothing_GameCharacter_HeadSlot FOREIGN KEY (HeadSlot) REFERENCES [Inventory].[Clothing$]([Class Name])
 
 ALTER TABLE Gaming.GameCharacter
@@ -234,4 +238,7 @@ ADD CONSTRAINT FK_Weapons_GameCharacter_LauncherSlot FOREIGN KEY (LauncherSlot) 
 
 ALTER TABLE Gaming.GameCharacter
 ADD CONSTRAINT FK_Weapons_GameCharacter_SecondarySlot FOREIGN KEY (SecondarySlot) REFERENCES [Inventory].[Weapons$]([Class Name])
+
+ALTER TABLE Gaming.GameStats
+ADD CONSTRAINT FK_User_GameStats FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 GO

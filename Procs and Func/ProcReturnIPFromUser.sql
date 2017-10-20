@@ -1,3 +1,6 @@
+USE GamingSiteDB
+GO
+
 -- Returns a users IPv6 as NVARCHAR
 CREATE FUNCTION dbo.ReturnIPV6(@UserID int)
 RETURNS NVARCHAR(255)
@@ -21,6 +24,7 @@ SELECT CONCAT(
 
 	   Return @IP
 END
+GO
 
 -- Returns a users IP as NVARCHAR
 CREATE FUNCTION dbo.ReturnIPv4(@UserID int)
@@ -37,6 +41,7 @@ DECLARE @IP NVARCHAR(255) = (SELECT TextAddress FROM [Site].IPAddress WHERE User
 
 RETURN @IP
 END
+GO
 
 CREATE FUNCTION dbo.ReturnUserIP(@UserID int)
 RETURNS NVARCHAR(255)
@@ -62,3 +67,7 @@ DECLARE @IP4 NVARCHAR(255) = (SELECT TextAddress FROM [Site].IPAddress WHERE Use
 
 RETURN @IP4
 END
+GO
+USE GamingSiteDB
+
+SELECT dbo.ReturnUserIP(3) AS IP4, dbo.ReturnUserIP(1) AS IP6

@@ -1,15 +1,15 @@
-USE ForumDB
+USE GamingSiteDB
 GO
 
-CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'ArMa3#ArBast$AnD?/Lov114*E';  
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'ArMa3#ArBast$AnD?/Lov114*E'; --Skyddar certifikat och 
 GO  
 
-CREATE CERTIFICATE PasswordCert
+CREATE CERTIFICATE PasswordCert -- A certificate is a digitally signed security object that contains a public (and optionally a private) key 
 WITH SUBJECT = 'User Password';
 GO
 
-CREATE SYMMETRIC KEY PW_Key  
-    WITH ALGORITHM = AES_256  
+CREATE SYMMETRIC KEY PW_Key  -- Skyddas genom PasswordCert, I en  SYMMETRIC KEY samma nyckel används för att kryptera och dekryptera data
+    WITH ALGORITHM = AES_256  --Advanced Encryption Standard
     ENCRYPTION BY CERTIFICATE PasswordCert;  
 GO
 
@@ -25,7 +25,7 @@ OPEN SYMMETRIC KEY PW_Key
 -- Now we encrypt the value in column [Password] using the symmetric key PW_Key. 
 -- And saves the result in column PW_Encrypted    
 UPDATE [Site].[User] 
-SET PW_Encrypted = EncryptByKey(Key_GUID('PW_Key')  
+SET PW_Encrypted = EncryptByKey(Key_GUID('PW_Key')  --Returns the GUID of a symmetric key in the database. EncryptByKey uses a symmetric key. This key must be open.
     , [Password], 1, HashBytes('SHA1', CONVERT( varbinary  
     , UserID)));  
 GO  
@@ -42,9 +42,9 @@ GO
 -- the original number will match the decrypted number.  
 
 
-SELECT [Password], PW_Encrypted  
+SELECT [Password], PW_Encrypted    
     AS 'Encrypted pw', CONVERT(nvarchar,  
-    DecryptByKey(PW_Encrypted, 1 ,   
+    DecryptByKey(PW_Encrypted, 1 ,   -- DecryptByKey uses a symmetric key. This symmetric key must already be open in the database.
     HashBytes('SHA1', CONVERT(varbinary, UserID))))  
     AS 'Decrypted pw' FROM [Site].[User];  
 GO  
@@ -59,7 +59,3 @@ SELECT PW_Encrypted
     AS 'Decrypted pw' FROM [Site].[User];  
 GO  
 
---Test so that not everyone can use the decryption 
-SELECT UserID, PW_Encrypted AS 'PW_Encrypted',
-CONVERT(varchar, DecryptByKey(PW_Encrypted)) AS 'Decrypted Credit Card Number'
-FROM [Site].[User];

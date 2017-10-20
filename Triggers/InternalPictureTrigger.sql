@@ -1,4 +1,4 @@
-USE ForumDB
+USE GamingSiteDB
 GO
 
 CREATE Trigger checkImageOnInsert

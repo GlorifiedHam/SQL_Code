@@ -1,4 +1,4 @@
-USE ForumDb 
+USE GamingSiteDB 
 GO
 
 CREATE TRIGGER CheckSubCategoryRole
