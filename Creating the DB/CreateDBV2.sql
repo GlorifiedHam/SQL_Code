@@ -300,7 +300,6 @@ IIF([Group8] IS NULL,
    ) -- end of IIF
 );
 
-
 CREATE TABLE Internal.[Role]( -- Only admin should be able to make changes to this table
 RoleID INT IDENTITY PRIMARY KEY,
 RoleRank int,
@@ -322,10 +321,21 @@ ShowEmail BIT NOT NULL DEFAULT 0,
 [Amount of entries] INT DEFAULT 0, --Trigger on creating an entry
 -- Phonenumber VARCHAR(22), 
 RegDATE DATE DEFAULT GETDATE(),
+Verification BIT, -- kommer ske genom Email just nu, men i framtiden kan det ske genom mobilen också 
 RoleID int DEFAULT 2,
 
 CONSTRAINT FK_Role_User FOREIGN KEY (RoleID) REFERENCES internal.[Role](RoleID) ON DELETE CASCADE
 );
+
+CREATE TABLE Internal.FailLogIn
+(
+FailLogInID INT IDENTITY PRIMARY KEY,
+UserID INT NOT NULL,
+Tries INT NOT NULL, -- 5 = 15m lock, 10 = 120m lock, 15 24h lock, 20 puts on a primary lock by changing email verification to 0
+Lock DateTime NULL,
+
+CONSTRAINT FK_User_FailLogIn FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
+)
 
 CREATE TABLE Internal.AccountBan
 (
@@ -636,6 +646,7 @@ IIF([Group8] IS NULL,
    ) -- end of IIF
 );
 
+/*
 CREATE TABLE Gaming.Players
 (
 PlayerID INT IDENTITY PRIMARY KEY,
@@ -643,7 +654,8 @@ PlayerID INT IDENTITY PRIMARY KEY,
 PlayerIdentity INT,
 LastServerID INT,
 )
-
+*/
+/*
 CREATE TABLE Gaming.IPAddressPlayer
 (
 IPAdressServerID INT NOT NULL IDENTITY ,
@@ -688,6 +700,7 @@ IIF([Group8] IS NULL,
      ))
    ) -- end of IIF
 );
+*/
 
 CREATE TABLE Gaming.Server24
 (
@@ -746,6 +759,7 @@ CONSTRAINT FK_Server_Ban FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](Serve
 CREATE TABLE Gaming.GameCharacter
 (
 GameCharacterID INT IDENTITY PRIMARY KEY,
+ServerID INT,
 UserID INT NOT NULL,
 BackpackSlot NVARCHAR(255),
 HeadSlot NVARCHAR(255),
@@ -786,7 +800,155 @@ CONSTRAINT FK_Items_GameCharacter_MapSlot FOREIGN KEY (MapSlot) REFERENCES [Inve
 CONSTRAINT FK_Items_GameCharacter_NVGSlot FOREIGN KEY (NVGSlot) REFERENCES [Inventory].[Items$]([Class Name]),
 CONSTRAINT FK_Weapons_GameCharacter_PrimarySlot FOREIGN KEY (PrimarySlot) REFERENCES [Inventory].[Weapons$]([Class Name]),
 CONSTRAINT FK_Weapons_GameCharacter_LauncherSlot FOREIGN KEY (LauncherSlot) REFERENCES [Inventory].[Weapons$]([Class Name]), 
-CONSTRAINT FK_Weapons_GameCharacter_SecondarySlot FOREIGN KEY (SecondarySlot) REFERENCES [Inventory].[Weapons$]([Class Name])
+CONSTRAINT FK_Weapons_GameCharacter_SecondarySlot FOREIGN KEY (SecondarySlot) REFERENCES [Inventory].[Weapons$]([Class Name]),
+CONSTRAINT FK_Server_GameCharacter FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID)
+
+)
+
+CREATE TABLE Inventory.WeaponsInBackPack
+(
+WeaponsInBackPackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Weapons_WeaponsInBackPack FOREIGN KEY ([Class Name]) REFERENCES [Inventory].[Weapons$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_WeaponsInBackPack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+
+)
+
+CREATE TABLE Inventory.ClothesInBackPack
+(
+ClothesInBackPackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Clothing_ClothesInBackPack FOREIGN KEY ([Class Name]) REFERENCES [Inventory].[Clothing$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_ClothesInBackPack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.ItemsInBackpack
+(
+ItemsInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Items_ItemsInBackpack FOREIGN KEY ([Class Name]) REFERENCES [Inventory].[Items$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_ItemsInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.ExplosivesInBackpack
+(
+ExplosivesInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Explosives_ExplosivesInBackpack FOREIGN KEY ([Class Name]) REFERENCES [Inventory].[Explosives$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_ExplosivesInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.MiscInBackpack
+(
+MiscInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Misc_MiscInBackpack FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Misc$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_MiscInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.AmmunitionInBackpack
+(
+AmmunitionInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Ammunition_AmmunitionInBackpack FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Ammunition$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_AmmunitionInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.AttachmentsInBackpack
+(
+AttachmentsInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Attachments_AttachmentsInBackpack FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Attachments$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_AttachmentsInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+
+)
+
+CREATE TABLE Inventory.MedicalInBackpack
+(
+MedicalInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Medical_MedicalInBackpack FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Medical$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_MedicalInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.FoodInBackpack
+(
+FoodInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Food_FoodInBackpack FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Food$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_FoodInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.DrinkablesInBackpack
+(
+DrinkablesInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Food_DrinkablesInBackpack FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Drinkables$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_DrinkablesInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Inventory.CraftingInBackpack
+(
+CraftingInBackpackID INT PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID INT,
+Amount INT NOT NULL,
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Crafting_CraftingInBackpack FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Crafting$]([Class Name]) ON DELETE CASCADE,
+CONSTRAINT FK_GameCharacter_CraftingInBackpack FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
+)
+
+CREATE TABLE Gaming.Garage
+(
+GarageID INT IDENTITY PRIMARY KEY,
+[Class Name] NVARCHAR(255),
+GameCharacterID  INT,
+Amount INT NOT NULL
+UNIQUE ([Class Name], GameCharacterID),
+
+CONSTRAINT FK_Vehicles_Garage FOREIGN KEY ([Class Name]) REFERENCES Inventory.[Vehicles$]([Class Name]) ON DELETE CASCADE, 
+CONSTRAINT FK_GameCharacter_Garage FOREIGN KEY (GameCharacterID) REFERENCES Gaming.GameCharacter(GameCharacterID)
 )
 
 CREATE TABLE Gaming.GameStats
@@ -810,7 +972,6 @@ GO
 EXEC sp_configure 'show advanced options', 0 --Needed to be able to get the data from the excel file
 RECONFIGURE
 GO
-
 
 EXEC master.dbo.sp_MSset_oledb_prop N'Microsoft.ACE.OLEDB.12.0', N'AllowInProcess', 0 --Needed to be able to get the data from the excel file
 GO 

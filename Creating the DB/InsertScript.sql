@@ -9,27 +9,27 @@ Values
 GO
 -- Insert into user
 Insert into [Site].[User]
-([Username], [Firstname],ShowFirstName, [Lastname], ShowLastName, [Age], ShowAge, [Password], [Email], ShowEmail, [Amount of entries], [RegDATE], [RoleID])
+([Username], [Firstname],ShowFirstName, [Lastname], ShowLastName, [Age], ShowAge, [Password], [Email], ShowEmail, [Amount of entries], [RegDATE], Verification, [RoleID])
 Values
-('GlorifiedHam','Alexander', 1, 'Jansson', 1, '1994-04-04', 1, 'War2Glory', 'Alexanderjan94@gmail.com',1 , 0, '2017-07-20', 13),
-('SpookyOwl','Jimmy', 1, 'Palmberg', 1, '1993-09-05', 1, 'WowIsBest213', 'Jimmy@gmail.com', 1, 0, '2017-07-31', 12),
-('Wardawg','Tom', 1,'karlsson', DEFAULT,'1967-06-19', 1,'qwerty123', 'Tom@live.se',1 ,0, default, 2),
-('SilverStorm','Amanda', 1,'Ekström', DEFAULT,'1996-03-22', 1, 'qwerty123', 'Amanda@live.se', 1,0, default, 5),
-('LongTime','Sara', 1,'Hewitt', 0, '1990-11-12', 1, 'qwerty123', 'Sara@gmail.com', 1, 0, default, 3),
-('Qwerty90','Anders', 1,'Pinnelli', 0,'1992-10-04', 1,'qwerty123', 'Anders@hotmail.com', 1, 0, default, 4),
-('BroMan','Erik', 1,'Pinnelli', 1,'1985-07-23', 0,'qwerty123', 'Erik@hotmail.se', 1, 0, default, 2),
-('DropKick','Klara', 1,'Woodlow', 0,'1991-06-25', 1,'asdfghjkl123', 'Saralee@hotmail.com', 0, 0, default, 2),
-('Loop96','Doris', 1,'cicelot', 1, '1996-08-01', 0, 'Yellowflag3', 'Klarkie@gmail.com',1 , 0, default, 3),
-('WoopWoop11','Johanna', 0,'wromba', 1,'1989-03-18', 1,'UtopiaLamb', 'JohannaW93@hotmail.com', 0, 0, default,2),
-('BadUser1', 'Tolvin', 0, 'Blovich', 0,'1992-05-17', 1,'LoveMyPW2', 'Tolvin@gmail.com',1, 0, default,2),
-('BadUser2', 'Matilda', 0, 'Passito', 0,'1991-01-23', 1, 'PWPWPWPW1', 'Matilda@gmail.com',1 ,0, default,2)
+('GlorifiedHam','Alexander', 1, 'Jansson', 1, '1994-04-04', 1, 'War2Glory', 'Alexanderjan94@gmail.com',1 , 0, '2017-07-20', 1, 13),
+('SpookyOwl','Jimmy', 1, 'Palmberg', 1, '1993-09-05', 1, 'WowIsBest213', 'Jimmy@gmail.com', 1, 0, '2017-07-31', 1, 12),
+('Wardawg','Tom', 1,'karlsson', DEFAULT,'1967-06-19', 1,'qwerty123', 'Tom@live.se',1 ,0, default, 1, 2),
+('SilverStorm','Amanda', 1,'Ekström', DEFAULT,'1996-03-22', 1, 'qwerty123', 'Amanda@live.se', 1 ,0, default, 1, 5),
+('LongTime','Sara', 1,'Hewitt', 0, '1990-11-12', 1, 'qwerty123', 'Sara@gmail.com', 1, 0, default, 1, 3),
+('Qwerty90','Anders', 1,'Pinnelli', 0,'1992-10-04', 1,'qwerty123', 'Anders@hotmail.com', 1, 0, default, 1, 4),
+('BroMan','Erik', 1,'Pinnelli', 1,'1985-07-23', 0,'qwerty123', 'Erik@hotmail.se', 1, 0, default, 1, 2),
+('DropKick','Klara', 1,'Woodlow', 0,'1991-06-25', 1,'asdfghjkl123', 'Saralee@hotmail.com', 0, 0, default, 1, 2),
+('Loop96','Doris', 1,'cicelot', 1, '1996-08-01', 0, 'Yellowflag3', 'Klarkie@gmail.com',1 , 0, default, 1, 3),
+('WoopWoop11','Johanna', 0,'wromba', 1,'1989-03-18', 1,'UtopiaLamb', 'JohannaW93@hotmail.com', 0, 0, default, 1, 2),
+('BadUser1', 'Tolvin', 0, 'Blovich', 0,'1992-05-17', 1,'LoveMyPW2', 'Tolvin@gmail.com',1, 0, default, 1, 2),
+('BadUser2', 'Matilda', 0, 'Passito', 0,'1991-01-23', 1, 'PWPWPWPW1', 'Matilda@gmail.com',1 ,0, default, 1, 2)
 GO
 
 -- Insert banned users
 INSERT INTO Internal.AccountBan
 (UserID, BannersID, Reason, DisplayReason, Severity, HowLong, BanDate)
 VALUES 
-(11, 1,'Spamm Account','Spam', 10, Cast('2317-01-01' AS DATETIME), getDate() ),
+(11, 1,'Spam Account','Spam', 10, Cast('2317-01-01' AS DATETIME), getDate() ),
 (12, 2, 'Harassment','Harassment', 3, CAST('2017-11-05' AS DATETIME), getDate())
 GO
 

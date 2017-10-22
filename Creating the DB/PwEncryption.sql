@@ -15,7 +15,7 @@ GO
 
 -- Creates the column that stores the encrypted data.  
 ALTER TABLE [Site].[User]   
-    ADD PW_Encrypted varbinary(128);   
+    ADD PW_Encrypted varbinary(128);                                                                                                                                                                                                                                                                                                                                                     
 GO  
 
 -- Opens the symmetric key with which to encrypt the data.  
@@ -59,3 +59,5 @@ SELECT PW_Encrypted
     AS 'Decrypted pw' FROM [Site].[User];  
 GO  
 
+CLOSE SYMMETRIC KEY PW_Key;  
+GO  
