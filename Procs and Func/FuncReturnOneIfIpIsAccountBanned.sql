@@ -2,7 +2,7 @@
 USE GamingSiteDB
 GO
 
-CREATE FUNCTION dbo.isIPAccountBanned(@GuestID int)
+CREATE FUNCTION dbo.isIPBanned(@GuestID int)
 RETURNS BIT
 AS
 BEGIN
@@ -33,4 +33,4 @@ VALUES
 (NULL, NULL, NULL, NULL, 194, 111, 243, 13, 88, 2), --Bannad
 (127, 12, 111, 0, 44, 333, 123, 23, NULL, 3) -- Bannad
 GO
-SELECT dbo.isIPAccountBanned(1), dbo.isIPAccountBanned(2), dbo.isIPAccountBanned(3)
+SELECT dbo.isIPBanned(1), dbo.isIPBanned(2), dbo.isIPBanned(3)

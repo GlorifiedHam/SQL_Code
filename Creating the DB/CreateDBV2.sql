@@ -340,16 +340,59 @@ CONSTRAINT FK_User_FailLogIn FOREIGN KEY (UserID) REFERENCES [Site].[User](UserI
 CREATE TABLE Internal.AccountBan
 (
 AccountBanID INT IDENTITY PRIMARY KEY,
-UserID INT,
-BannersID INT, -- The one that executed the ban
-Reason NVARCHAR (1000),
-DisplayReason NVARCHAR (1000),
-Severity INT, -- 1-10
-HowLong DATETIME,
-BanDate DATETIME,
+UserID INT NOT NULL,
+BannersID INT NOT NULL, -- The one that executed the ban
+Reason NVARCHAR (1000) NOT NULL,
+DisplayReason NVARCHAR (1000) NOT NULL,
+Severity INT NOT NULL, -- 1-10
+HowLong DATETIME NOT NULL,
+BanDate DATETIME NOT NULL,
 
 CONSTRAINT FK_User_AccountBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
+
+CREATE TABLE Internal.UniversalBan
+(
+UniversalBanID INT NOT NULL IDENTITY,
+Group8 VARBINARY(2) NULL,  --I VARBINARY(2) fields that represents the 8 groups in a ipv6. The fields 5 - 8 is nullable as they are only used for IPv6. The fields 1 - 4 is set to NOT NULL as they are be used for both IPv4 and IPv6.
+Group7 VARBINARY(2) NULL,
+Group6 VARBINARY(2) NULL,
+Group5 VARBINARY(2) NULL,
+Group4 VARBINARY(2) NOT null,
+Group3 VARBINARY(2) NOT null,
+Group2 VARBINARY(2) NOT null,
+Group1 VARBINARY(2) NOT null,
+Network TINYINT null
+)
+ALTER TABLE Internal.UniversalBan -- Adds the PK
+ADD CONSTRAINT [PK_UniversalBanID]
+PRIMARY KEY CLUSTERED
+(UniversalBanID ASC)
+ WITH (FILLFACTOR = 100, DATA_COMPRESSION = PAGE);
+
+CREATE NONCLUSTERED INDEX [Index_UniversalBan_Groups] -- Adds an Index
+  ON Internal.UniversalBan (Group1 ASC, Group2 ASC, Group3 ASC, Group4 ASC,
+         Group5 ASC, Group6 ASC, Group7 ASC, Group8 ASC, Network ASC)
+  WITH (FILLFACTOR = 100, DATA_COMPRESSION = PAGE);
+
+  ALTER TABLE Internal.UniversalBan -- Creates a textaddress of the IP address
+  ADD TextAddress AS (
+IIF([Group8] IS NULL,
+    -- IPv4
+    CONCAT(CONVERT(TINYINT, [Group4]), '.', CONVERT(TINYINT, [Group3]), '.',
+      CONVERT(TINYINT, [Group2]), '.', CONVERT(TINYINT, [Group1]),
+      IIF([Network] IS NOT NULL, CONCAT('/', [Network]), '')),
+    -- IPv6
+    LOWER(CONCAT(
+      CONVERT(VARCHAR(4), [Group8], 2), ':', CONVERT(VARCHAR(4), [Group7], 2), ':',
+      CONVERT(VARCHAR(4), [Group6], 2), ':', CONVERT(VARCHAR(4), [Group5], 2), ':',
+      CONVERT(VARCHAR(4), [Group4], 2), ':', CONVERT(VARCHAR(4), [Group3], 2), ':',
+      CONVERT(VARCHAR(4), [Group2], 2), ':', CONVERT(VARCHAR(4), [Group1], 2),
+      IIF([Network] IS NOT NULL, CONCAT('/', [Network]), '')
+     ))
+   ) -- end of IIF
+);
+
 
 CREATE TABLE [Site].[IPAddress]
 (
