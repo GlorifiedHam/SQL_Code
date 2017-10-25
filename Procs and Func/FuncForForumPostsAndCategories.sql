@@ -47,7 +47,7 @@ RETURNS TABLE
 AS 
 RETURN
 (
-SELECT SubCategoryName FROM Forum.SubCategory WHERE [Read] <= (SELECT dbo.GetRoleRank(@UserID)) AND GlobalCategoryID = @GlobalCategoryID
+SELECT SubCategoryName FROM Forum.SubCategory WHERE [Read] <= (SELECT dbo.GetRoleRank(@UserID) AND GlobalCategoryID = @GlobalCategoryID )
 )
 GO
 
@@ -55,3 +55,11 @@ SELECT * FROM dbo.GetSubCategories(1, 7) -- Will return something now
 SELECT * FROM dbo.GetSubCategories(4, 7) -- Will not return anything
 GO
 
+CREATE FUNCTION dbo.GetThrads(@UserID INT, @SubcategoryID INT)
+RETURN TABLE
+AS
+RETURN 
+(
+SELECT TreadTitle FROM Forum.Thread WHERE [Read] <= (SELECT dbo.GetRoleRank(@UserID) AND SubCategoryID = @SubcategoryID)
+)
+GO
