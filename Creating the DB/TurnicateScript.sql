@@ -31,7 +31,7 @@ ALTER TABLE [GamingSiteDB].[Site].News DROP CONSTRAINT FK_User_News
 ALTER TABLE [GamingSiteDB].[Site].NewsPrictures DROP CONSTRAINT FK_News_NewsPrictures
 ALTER TABLE [GamingSiteDB].[Site].Guide DROP CONSTRAINT FK_User_Guide
 ALTER TABLE [GamingSiteDB].[Site].GuidePrictures DROP CONSTRAINT FK_Guide_GuidePrictures
-ALTER TABLE [GamingSiteDB].Gaming.IPAddressPlayer DROP CONSTRAINT FK_Player_IPAddressPlayer
+--ALTER TABLE [GamingSiteDB].Gaming.IPAddressPlayer DROP CONSTRAINT FK_Player_IPAddressPlayer
 ALTER TABLE [GamingSiteDB].Gaming.[IPAddressServer] DROP CONSTRAINT FK_Server_IPAddress
 ALTER TABLE [GamingSiteDB].Gaming.Server24 DROP CONSTRAINT FK_Server_Server24
 ALTER TABLE [GamingSiteDB].Gaming.UniquePlayers24 DROP CONSTRAINT FK_Server24_UniquePlayers24
@@ -104,9 +104,9 @@ truncate table [Site].News;
 truncate table [Site].NewsPrictures; 
 truncate table [Site].Guide; 
 truncate table [Site].GuidePrictures; 
-truncate table Gaming.IPAddressPlayer; 
+-- truncate table Gaming.IPAddressPlayer; 
 truncate table Gaming.[Server];
-truncate table Gaming.Players; 
+--truncate table Gaming.Players; 
 truncate table Gaming.IPAddressServer; 
 truncate table Gaming.Server24; 
 truncate table Gaming.UniquePlayers24; 
@@ -220,8 +220,8 @@ ADD CONSTRAINT FK_User_Guide FOREIGN KEY (UserID) REFERENCES [Site].[User](UserI
 ALTER TABLE [Site].GuidePrictures
 ADD CONSTRAINT FK_Guide_GuidePrictures FOREIGN KEY (GuideID) REFERENCES [Site].Guide(GuideID) ON DELETE CASCADE
 
-ALTER TABLE Gaming.IPAddressPlayer
-ADD CONSTRAINT FK_Player_IPAddressPlayer FOREIGN KEY (PlayerID) REFERENCES Gaming.Players(PlayerID) ON DELETE CASCADE
+--ALTER TABLE Gaming.IPAddressPlayer
+--ADD CONSTRAINT FK_Player_IPAddressPlayer FOREIGN KEY (PlayerID) REFERENCES Gaming.Players(PlayerID) ON DELETE CASCADE
 
 ALTER TABLE Gaming.IPAddressServer
 ADD CONSTRAINT FK_Server_IPAddress FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE

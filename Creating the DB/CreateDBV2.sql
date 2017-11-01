@@ -260,7 +260,7 @@ ADD PRIMARY KEY  ([Class Name])
 CREATE TABLE [Site].[GuestIP]
 (
 GuestIPID INT NOT NULL IDENTITY,
-GuestID INT UNIQUE,
+GuestID INT UNIQUE NOT NULL,
 Group8 VARBINARY(2) NULL,  --I VARBINARY(2) fields that represents the 8 groups in a ipv6. The fields 5 - 8 is nullable as they are only used for IPv6. The fields 1 - 4 is set to NOT NULL as they are be used for both IPv4 and IPv6.
 Group7 VARBINARY(2) NULL,
 Group6 VARBINARY(2) NULL,
@@ -302,8 +302,8 @@ IIF([Group8] IS NULL,
 
 CREATE TABLE Internal.[Role]( -- Only admin should be able to make changes to this table
 RoleID INT IDENTITY PRIMARY KEY,
-RoleRank int,
-RoleName NVARCHAR(100) UNIQUE
+RoleRank int NOT NULL,
+RoleName NVARCHAR(100) UNIQUE NOT NULL
 )
 
 CREATE TABLE [Site].[User](
@@ -314,15 +314,15 @@ ShowFirstName BIT NOT NULL DEFAULT 0,
 Lastname NVARCHAR(1000) NOT NULL,
 ShowLastName BIT NOT NULL DEFAULT 0,
 Age DATE NOT NULL,
-ShowAge BIT  DEFAULT 0,
+ShowAge BIT NOT NULL DEFAULT 0,
 [Password] NVARCHAR(100), --Changes to pw_encrypted 
 Email NVARCHAR(300) NOT NULL UNIQUE,
 ShowEmail BIT NOT NULL DEFAULT 0,
-[Amount of entries] INT DEFAULT 0, --Trigger on creating an entry
+[Amount of entries] INT DEFAULT 0 NOT NULL, --Trigger on creating an entry
 -- Phonenumber VARCHAR(22), 
-RegDATE DATE DEFAULT GETDATE(),
-Verification BIT, -- kommer ske genom Email just nu, men i framtiden kan det ske genom mobilen också 
-RoleID int DEFAULT 2,
+RegDATE DATE DEFAULT GETDATE() NOT NULL,
+Verification BIT NOT NULL, -- kommer ske genom Email just nu, men i framtiden kan det ske genom mobilen också 
+RoleID int DEFAULT 2 NOT NULL,
 
 CONSTRAINT FK_Role_User FOREIGN KEY (RoleID) REFERENCES internal.[Role](RoleID) ON DELETE CASCADE
 );
@@ -465,13 +465,13 @@ CONSTRAINT FK_Picture_Profile FOREIGN KEY (PicAvatarID) REFERENCES Internal.Pict
 -- https://stackoverflow.com/questions/3094495/db-schema-for-chats
 CREATE TABLE [Site].MessageSend(
 MessageSendID INT IDENTITY PRIMARY KEY,
-SenderID INT,
-ReciverID INT,
+SenderID INT NOT NULL,
+ReciverID INT NOT NULL,
 [Message] NVARCHAR(3000) NOT NULL,
 title NVARCHAR(200) NOT NULL,
-DateSent DateTime,
-[read] BIT DEFAULT 0,  
-Flag BIT DEFAULT 0,
+DateSent DateTime NOT NULL DEFAULT GetDate(),
+[read] BIT DEFAULT 0 NOT NULL,  
+Flag BIT DEFAULT 0 NOT NULL,
 
 CONSTRAINT FK_User_MessageSender FOREIGN KEY (SenderID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
 CONSTRAINT FK_User_UsernameReciver FOREIGN KEY (ReciverID) REFERENCES [Site].[User](UserID)
@@ -480,8 +480,8 @@ CONSTRAINT FK_User_UsernameReciver FOREIGN KEY (ReciverID) REFERENCES [Site].[Us
 CREATE TABLE Forum.GlobalCategory
 (
 GlobalCategoryID INT IDENTITY PRIMARY KEY,
-UserID INT,
-[Read] INT, 
+UserID INT NOT NULL,
+[Read] INT NOT NULL, 
 GlobalCategoryName NVARCHAR(200) NOT NULL,
 
 CONSTRAINT FK_User_GlobalCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
@@ -491,11 +491,11 @@ CONSTRAINT FK_Roles_GlobalCategory FOREIGN KEY ([Read]) REFERENCES Internal.[Rol
 CREATE TABLE Forum.SubCategory
 (
 SubCategoryID INT IDENTITY PRIMARY KEY,
-[Read] INT DEFAULT 1, 
-[Write] INT DEFAULT 1,
-UserID INT,
+[Read] INT DEFAULT 1 NOT NULL, 
+[Write] INT DEFAULT 1 NOT NULL,
+UserID INT NOT NULL,
 SubCategoryName NVARCHAR(200) NOT NULL,
-GlobalCategoryID INT,
+GlobalCategoryID INT NOT NULL,
 
 CONSTRAINT FK_User_SubCategory FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE,
 CONSTRAINT FK_GlobalCategoryID_SubCategory FOREIGN KEY (GlobalCategoryID) REFERENCES Forum.GlobalCategory(GlobalCategoryID),
@@ -506,12 +506,12 @@ CONSTRAINT FK_Roles_SubCategory_Write FOREIGN KEY ([Write]) REFERENCES Internal.
 CREATE TABLE Forum.Thread
 (
 ThreadID INT IDENTITY PRIMARY KEY,
-[Read] INT DEFAULT 1, 
-[Write] INT DEFAULT 1,
-UserID INT,
+[Read] INT DEFAULT 1 NOT NULL, 
+[Write] INT DEFAULT 1 NOT NULL,
+UserID INT NOT NULL,
 ThreadTitle NVARCHAR(200) NOT NULL,
-SubCategoryID INT,
-Locked BIT DEFAULT 0,
+SubCategoryID INT NOT NULL,
+Locked BIT DEFAULT 0 NOT NULL,
 
 CONSTRAINT FK_User_Thread FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
 CONSTRAINT FK_SubCategory_Thread FOREIGN KEY (SubCategoryID) REFERENCES Forum.SubCategory(SubCategoryID),
@@ -522,10 +522,10 @@ CONSTRAINT FK_Roles_Thread_Write FOREIGN KEY ([Write]) REFERENCES Internal.[Role
 CREATE TABLE Forum.ThreadLock
 (
 ThreadLockID INT IDENTITY PRIMARY KEY,
-ThreadID INT,
-Reason NVARCHAR(1000),
-DisplayReason NVARCHAR(1000),
-UserID INT,
+ThreadID INT NOT NULL,
+Reason NVARCHAR(1000) NOT NULL,
+DisplayReason NVARCHAR(1000) NOT NULL,
+UserID INT NOT NULL,
 
 CONSTRAINT FK_User_ThreadLock FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
 CONSTRAINT FK_Thread_ThreadLock FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(ThreadID)
@@ -534,13 +534,13 @@ CONSTRAINT FK_Thread_ThreadLock FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(T
 CREATE TABLE Forum.AccountForumBan
 (
 AccountForumBan INT IDENTITY PRIMARY KEY,
-UserID INT,
-BannersID INT, -- The one that executed the ban
-Reason NVARCHAR (1000),
-DisplayReason NVARCHAR (1000),
-Severity INT, -- 1-10
-HowLong DATETIME,
-BanDate DATETIME,
+UserID INT NOT NULL,
+BannersID INT NOT NULL, -- The one that executed the ban
+Reason NVARCHAR (1000) NOT NULL,
+DisplayReason NVARCHAR (1000) NOT NULL,
+Severity INT NOT NULL, -- 1-10
+HowLong DATETIME NOT NULL,
+BanDate DATETIME NOT NULL,
 
 CONSTRAINT FK_User_AccountForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
@@ -548,12 +548,12 @@ CONSTRAINT FK_User_AccountForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User]
 CREATE TABLE Forum.ForumEntry
 (
 ForumEntryID INT IDENTITY PRIMARY KEY,
-UserID INT,
+UserID INT NOT NULL,
 [Entry] NVARCHAR(4000) NOT NULL,
-ThreadID INT,
-Edited BIT default 0,
+ThreadID INT NOT NULL,
+Edited BIT default 0 NOT NULL,
 LastEdited DATETIME,
-Created DATETIME,
+Created DATETIME DEFAULT GetDate() NOT NULL,
 
 CONSTRAINT FK_User_ForumEntry FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE, 
 CONSTRAINT FK_Thread_ForumEntry FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(ThreadID)
@@ -561,12 +561,12 @@ CONSTRAINT FK_Thread_ForumEntry FOREIGN KEY (ThreadID) REFERENCES Forum.Thread(T
 
 CREATE TABLE Forum.ForumBan
 (
-UserID INT,
-ForumBanID INT IDENTITY PRIMARY KEY,
-Reason NVARCHAR,
-Severity INT, -- 1-10
-HowLong DATE,
-BanDate Date,
+UserID INT NOT NULL,
+ForumBanID INT IDENTITY PRIMARY KEY NOT NULL,
+Reason NVARCHAR NOT NULL,
+Severity INT NOT NULL, -- 1-10
+HowLong DATE NOT NULL,
+BanDate Date DEFAULT GetDate() NOT NULL,
 
 CONSTRAINT FK_User_ForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
@@ -574,7 +574,7 @@ CONSTRAINT FK_User_ForumBan FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID
 CREATE TABLE [Site].Announcement
 (
 AnnouncementID INT IDENTITY PRIMARY KEY,
-[Message] NVARCHAR(3000),
+[Message] NVARCHAR(3000) NOT NULL,
 Kind NVARCHAR(255) NOT NULL, 
 CHECK (Kind = 'Server' OR Kind = 'Forum' OR Kind = 'HomePage' OR Kind='Important' OR Kind = 'Other')
 )
@@ -582,11 +582,11 @@ CHECK (Kind = 'Server' OR Kind = 'Forum' OR Kind = 'HomePage' OR Kind='Important
 CREATE TABLE [Site].News
 (
 NewsID INT IDENTITY PRIMARY KEY,
-UserID INT, 
-[Text] NVARCHAR(3500),
+UserID INT NOT NULL, 
+[Text] NVARCHAR(3500) NOT NULL,
 DatePosted DATE NOT NULL DEFAULT getDATE(),
-Likes INT,
-clicks INT,
+Likes INT Default 0 NOT Null,
+clicks INT Default 0 NOT Null,
 
 CONSTRAINT FK_User_News FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
@@ -595,7 +595,7 @@ CREATE TABLE [Site].NewsPrictures
 (
 NewsPricturesID INT IDENTITY PRIMARY KEY,
 Picture VarBinary(max) NOT NULL,
-NewsID INT,
+NewsID INT NOT NULL,
 
 CONSTRAINT FK_News_NewsPrictures FOREIGN KEY (NewsID) REFERENCES [Site].News(NewsID) ON DELETE CASCADE
 )
@@ -603,11 +603,11 @@ CONSTRAINT FK_News_NewsPrictures FOREIGN KEY (NewsID) REFERENCES [Site].News(New
 CREATE TABLE [Site].Guide 
 (
 GuideID INT IDENTITY PRIMARY KEY,
-UserID INT, 
+UserID INT NOT NULL, 
 [Text] NVARCHAR(3500),
 DatePosted DATE NOT NULL DEFAULT getDATE(),
-Likes INT,
-clicks INT,
+Likes INT Default 0 NOT Null,
+clicks INT Default 0 NOT Null,
 
 CONSTRAINT FK_User_Guide FOREIGN KEY (UserID) REFERENCES [Site].[User](UserID) ON DELETE CASCADE
 )
@@ -616,7 +616,7 @@ CREATE TABLE [Site].GuidePrictures
 (
 GuidePrictures INT IDENTITY PRIMARY KEY,
 Picture VarBinary(max) NOT NULL,
-GuideID INT,
+GuideID INT NOT Null,
 
 CONSTRAINT FK_Guide_GuidePrictures FOREIGN KEY (GuideID) REFERENCES [Site].Guide(GuideID) ON DELETE CASCADE
 )
@@ -626,22 +626,22 @@ CREATE TABLE Gaming.[Server]
 ServerID INT IDENTITY PRIMARY KEY,
 [Name] NVARCHAR(100),
 [Online] BIT NOT NULL,
-LastCHECK DATE,
-MaxPlayers INT,
+LastCHECK DATE NOT Null,
+MaxPlayers INT NOT Null,
 CHECK (MaxPlayers >= NumberOfPlayers),
-NumberOfPlayers INT,
-UniquePlayers INT, -- Kan hämtas från players genom en trigger
-HeadMod NVARCHAR,
-Map NVARCHAR, 
-Mods NVARCHAR,
-LastServerReset Datetime,
-Resets DateTime, --Hours 
-Bans INT,
-MoneyCirculatedInShop money,
-MissionsDone int,
-PlayerKills int, 
-PlayerAIKills int, --Player killed AI
-AIPlayerKills int, --AI killed Player
+NumberOfPlayers INT NOT Null,
+UniquePlayers INT NOT Null, -- Kan hämtas från players genom en trigger
+HeadMod NVARCHAR NOT Null,
+Map NVARCHAR NOT Null, 
+Mods NVARCHAR NOT Null,
+LastServerReset Datetime NOT Null,
+Resets DateTime NOT Null, --Hours 
+Bans INT NOT Null,
+MoneyCirculatedInShop money NOT Null,
+MissionsDone int NOT Null,
+PlayerKills int NOT Null, 
+PlayerAIKills int NOT Null, --Player killed AI
+AIPlayerKills int NOT Null, --AI killed Player
 )
 
 CREATE TABLE Gaming.[IPAddressServer]
@@ -653,7 +653,7 @@ Group6 VARBINARY(2) NULL,
 Group5 VARBINARY(2) NULL,
 Group4 VARBINARY(2) NOT NULL,
 Group3 VARBINARY(2) NOT NULL,
-Group2 VARBINARY(2) NOT NULL,
+Group2 VARBINARY(2) NOT Null,
 Group1 VARBINARY(2) NOT NULL,
 Network TinyINT NULL,
 ServerID INT
@@ -748,14 +748,14 @@ IIF([Group8] IS NULL,
 CREATE TABLE Gaming.Server24
 (
 Server24ID INT IDENTITY PRIMARY KEY,
-ServerID INT,
-UniquePlayers INT, --Make a trigger
-Bans INT,
-MoneyCirculatedInShop money,
-MissionsDone int,
-PlayerKills int, 
-PlayerAIKills int, --Players kille AI
-AIPlayerKills int, --AI killed Player
+ServerID INT NOT NULL,
+UniquePlayers INT NOT NULL, --Make a trigger
+Bans INT NOT NULL,
+MoneyCirculatedInShop money NOT NULL,
+MissionsDone int NOT NULL,
+PlayerKills int NOT NULL, 
+PlayerAIKills int NOT NULL, --Players kille AI
+AIPlayerKills int NOT NULL, --AI killed Player
 
 CONSTRAINT FK_Server_Server24 FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
 )
@@ -763,8 +763,8 @@ CONSTRAINT FK_Server_Server24 FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](
 CREATE TABLE Gaming.UniquePlayers24
 (
 UniquePlayer24ID INT IDENTITY PRIMARY KEY,
-ServerID INT,
-PlayerID INT,
+ServerID INT NOT NULL,
+PlayerID INT NOT NULL,
 
 CONSTRAINT FK_Server24_UniquePlayers24 FOREIGN KEY (ServerID) REFERENCES Gaming.Server24(Server24ID) ON DELETE CASCADE
 )
@@ -772,15 +772,15 @@ CONSTRAINT FK_Server24_UniquePlayers24 FOREIGN KEY (ServerID) REFERENCES Gaming.
 CREATE TABLE Gaming.ServerStats
 (
 ServerStatsID INT IDENTITY PRIMARY KEY,
-ServerID INT,
-UniquePlayers INT, --Make a trigger
-Bans INT,
-PlayerKills int, 
-PlayerAIKills int, --Players kille AI
-AIPlayerKills int, --AI killed Player															       
-MoneyCirculatedInShop money, -- If MoneyCirculatedInShop >= 912,337,203,685,477.5807, highest is 922,337,203,685,477.5807, we could use an instead of trigger,
-FullMoney int not null default 0, -- Sätt till 0 så det inte ger errors
-MissionsDone int,
+ServerID INT NOT NULL,
+UniquePlayers INT NOT NULL, --Make a trigger
+Bans INT NOT NULL,
+PlayerKills int NOT NULL, 
+PlayerAIKills int NOT NULL, --Players kille AI
+AIPlayerKills int NOT NULL, --AI killed Player															       
+MoneyCirculatedInShop money NOT NULL, -- If MoneyCirculatedInShop >= 912,337,203,685,477.5807, highest is 922,337,203,685,477.5807, we could use an instead of trigger,
+FullMoney int default 0 NOT NULL, -- Sätt till 0 så det inte ger errors
+MissionsDone int NOT NULL,
 
 CONSTRAINT FK_Server_ServerStats FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
 )
@@ -788,12 +788,12 @@ CONSTRAINT FK_Server_ServerStats FOREIGN KEY (ServerID) REFERENCES Gaming.[Serve
 CREATE TABLE Gaming.ServerBan
 (
 ServerBanID INT IDENTITY PRIMARY KEY,
-ServerID INT,
-PlayerID INT,
-Reason NVARCHAR,
-Severity INT, -- 1-10
-HowLong DATE,
-BanDate Date,
+ServerID INT NOT NULL,
+PlayerID INT NOT NULL,
+Reason NVARCHAR NOT NULL,
+Severity INT NOT NULL, -- 1-10
+HowLong DATE NOT NULL,
+BanDate Date DEFAULT GetDate() NOT NULL,
 
 CONSTRAINT FK_Server_Ban FOREIGN KEY (ServerID) REFERENCES Gaming.[Server](ServerID) ON DELETE CASCADE
 )
